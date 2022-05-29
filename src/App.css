@@ -1,38 +1,67 @@
-.App {
-  text-align: center;
+.menu__link {
+  text-decoration: none;
+  color: black;
+  margin: 0 15px;
+  padding-top: 8px;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+.mb-20 {
+  margin-bottom: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.mt-80 {
+  margin-top: 80px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.ml-200 {
+  margin-left: 200px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.mb-40 {
+  margin-bottom: 40px;
+}
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.ml-5 {
+  margin-left: 5px;
+}
+
+.max-width {
+  max-width: 800px;
+}
+
+.max-width-400 {
+  max-width: 400px;
+}
+
+a {
+  text-decoration: none;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+a:hover {
+  color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.valid-form__message {
+  font-size: 14px;
+  color: red;
+}
+
+.form-action {
+  display: flex;
+  justify-content:  space-between;
+}
+
+.select-size-page {
+  width: 24% !important;
+  height: 35px;
+}
+.search__input {
+  height: 35px;
 }
