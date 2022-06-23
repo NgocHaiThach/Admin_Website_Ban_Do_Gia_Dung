@@ -1,44 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Container, Row } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { getListClassification } from '../../reudx/Classification/apiFuntionClassification';
-import { getListClassificationSuccess } from '../../reudx/Classification/listClassificationSlice';
+import { useParams } from 'react-router-dom';
 import callApi from '../../utils/callApi';
 import { FormatInput } from '../../utils/format';
-import TableClassification from './TableClassification';
+import TableInfoStore from './TableInfoStore';
 
-function HomeClassification(props) {
-
+function InfoStore(props) {
     const titleData = [
-        // { name: 'id', field: "Id", sortable: 'none' },
         { name: 'id', field: "Mã", sortable: 'none' },
-        { name: 'classification', field: "Danh Mục", sortable: 'none' },
-        // { name: 'action', field: "Hoạt động", sortable: 'none' },
+        { name: 'name', field: "Tên Sản Phẩm", sortable: 'none' },
+        { name: 'quantity', field: "Số Lượng", sortable: 'none' },
     ]
+    const { id } = useParams();
+    const [listInfo, setListInfo] = useState([]);
+    const [name, setName] = useState('');
+
+    const getInfoStoreById = async () => {
+        const res = await callApi("/storeds/get", "POST", {
+            storeId: id
+        })
+        setListInfo(res.data.result.products);
+        setName(res.data.result.name)
+    }
 
     const [listToSearch, setListToSearch] = useState([]);
     const [search, setSearch] = useState('');
-    const [input, setInput] = useState('');
     const typingTimoutRef = useRef(null);
-    const dispatch = useDispatch();
 
     //get api lưu vào ListToSearch để cho việc filter 
     const getToSearch = async () => {
-        const res = await callApi('/admin/classifications/all', 'GET')
-        setListToSearch(res.data.result)
+        const res = await callApi("/storeds/get", 'POST', {
+            storeId: id
+        })
+        setListToSearch(res.data.result.products);
+
     }
-
-    useEffect(() => {
-        getToSearch();
-        getListClassification(dispatch);
-    }, []);
-
-
-    const listClassification = useSelector(state => state.classification.list);
-
     const onSearch = (e) => {
         const input = e.target.value
-        setSearch(input)
+        setSearch(input);
 
         if (typingTimoutRef.current) {
             clearTimeout(typingTimoutRef.current)
@@ -57,42 +56,44 @@ function HomeClassification(props) {
 
     //xu ly search product
     const handleSearch = (input) => {
-        const val = FormatInput(input.search)
+        const val = FormatInput(input.search);
         const filter = listToSearch.filter((item) => {
             const name = FormatInput(item.name)
             if (name.includes(val)) {
                 return item
             }
-        });
-        dispatch(getListClassificationSuccess(filter));
-        setInput(input);
+        })
+        setListInfo(filter)
     }
 
-
+    useEffect(() => {
+        getInfoStoreById();
+        getToSearch();
+    }, []);
 
     return (
-        <Container>
+        listInfo && <Container>
             <Row>
                 <div className="panel panel-primary">
                     <div className="panel-heading">
-                        <h3 className="panel-title mb-40 mt-4">Danh Sách Danh Mục</h3>
+                        <h3 className="panel-title mb-40 mt-4">Danh sách sản phẩm cửa hàng {name}</h3>
                     </div>
 
                     <form className='search-product mb-20' >
                         <input className='search__input'
-                            placeholder='Loại sản phẩm bạn muốn tìm...'
+                            placeholder='Sản phẩm bạn muốn tìm bạn muốn tìm...'
                             value={search}
                             onChange={onSearch}
                             style={{ fontSize: '18px', width: '350px', padding: '10px' }}
                         />
                     </form>
 
-                    <div className="total-money mb-3">
-                        Tổng sản phẩm: {listClassification.length}
+                    <div className="total-money mb-3" style={{ fontSize: '20px' }}>
+                        Tổng sản phẩm: {listInfo.length}
                     </div>
 
-                    <TableClassification
-                        listClassification={listClassification}
+                    <TableInfoStore
+                        listInfo={listInfo}
                         titleData={titleData}
                     />
                 </div>
@@ -101,4 +102,4 @@ function HomeClassification(props) {
     );
 }
 
-export default HomeClassification;
+export default InfoStore;

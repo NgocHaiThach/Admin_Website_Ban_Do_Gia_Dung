@@ -38,12 +38,12 @@ function Menu(props) {
                             </NavDropdown.Item>
                             <NavDropdown.Item style={{ margin: '0', padding: '0' }}>
                                 <Link className="menu__link" to="/specification">
-                                    Q.Thông Số
+                                    Q.Lý Thông Số
                                 </Link>
                             </NavDropdown.Item>
                             <NavDropdown.Item style={{ margin: '0', padding: '0' }}>
                                 <Link className="menu__link" to="/stores">
-                                    Q.Cửa hàng
+                                    Q.Lý Cửa hàng
                                 </Link>
                             </NavDropdown.Item>
                         </NavDropdown>

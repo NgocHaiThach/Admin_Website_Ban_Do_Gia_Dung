@@ -41,9 +41,19 @@ function TableStore({ store, titleData }) {
                         <tr key={index}>
                             <td>{item.storeId}</td>
                             <td>{item.name}</td>
-                            <td>{item.fullAddress}</td>
+                            <td>{item.wardName}, {item.districtName}, {item.provinceName} </td>
                             <td className="col-lg-3">
                                 <Button variant="success" className="mr-5">
+                                    <Link style={{ textDecoration: 'none', color: 'white' }} to={`import-store/${item.storeId}`}>
+                                        Nhập hàng
+                                    </Link>
+                                </Button>
+                                <Button variant="primary" className="mr-5">
+                                    <Link style={{ textDecoration: 'none', color: 'white' }} to={`info-store/${item.storeId}`}>
+                                        Thông tin cửa hàng
+                                    </Link>
+                                </Button>
+                                {/* <Button variant="success" className="mr-5">
                                     <Link style={{ textDecoration: 'none', color: 'white' }} to={`update-store/${item.storeId}`}>
                                         Cập nhật
                                     </Link>
@@ -56,7 +66,7 @@ function TableStore({ store, titleData }) {
                                     variant="danger" className="ml-5"
                                 >
                                     Xóa
-                                </Button>
+                                </Button> */}
                                 <Modal show={show} onHide={handleClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Thông báo</Modal.Title>

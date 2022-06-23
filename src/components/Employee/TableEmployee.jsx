@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deleteOneEmployee, getListEmployee, getSortEmployee, setListEmployee } from '../../reudx/apiFuntion';
 import { useHistory } from 'react-router-dom';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatPrice } from '../../utils/format';
 
 function TableEmployee({ listEmployee, titleData }) {
 
@@ -110,7 +110,7 @@ function TableEmployee({ listEmployee, titleData }) {
                         {titleData.map((title, index) => (
                             <th key={index}>
                                 {title.field}
-                                {renderIconSort(title.sortable, index, title.name)}
+                                {/* {renderIconSort(title.sortable, index, title.name)} */}
                             </th>
                         ))}
                     </tr>
@@ -119,10 +119,13 @@ function TableEmployee({ listEmployee, titleData }) {
                     <tbody key={index}>
                         <tr key={index}>
                             {/* {renderDataValues(employee)} */}
+                            {/* <td>  <div class="form-check">
+                                <input class="form-check-input" type="checkbox" />
+                            </div></td> */}
                             <td>{employee.productId}</td>
                             <td>{employee.name}</td>
                             <td>{employee.categoryId}</td>
-                            <td>{employee.price}</td>
+                            <td>{formatPrice(employee.price)}đ</td>
                             <td>100 </td>
                             <td>{formatDate(employee.modifyDate)}</td>
                             <td className="col-lg-3">

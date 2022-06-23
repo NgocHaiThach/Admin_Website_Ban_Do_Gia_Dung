@@ -14,15 +14,23 @@ export const getStore = async (dispatch) => {
 }
 
 //ADD: add one category
-export const addStore = async (dispatch, name, province, district, ward, detail,) => {
+export const addStore = async (dispatch, 
+    name, 
+    provinceName, districtName, wardName, 
+    detail,phone,
+    provinceId, districtId, wardId, ) => {
     try {
         const res = await callApi(`/stores`, 'POST', {
             name: name,
-            province: province,
-            district: district,
-            ward: ward,
-            detail:detail,
-        })
+            phone: phone,
+            provinceId: provinceId,
+            provinceName: provinceName,
+            districtId: districtId,
+            districtName: districtName,
+            wardId: wardId,
+            wardName: wardName,
+            detail: detail
+        });
     }
     catch (err) {
         console.log(err)

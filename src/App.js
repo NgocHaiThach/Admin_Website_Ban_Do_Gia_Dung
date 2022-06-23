@@ -27,6 +27,8 @@ import UpdateSpecification from './components/Specification/UpdateSpecification'
 import HomeStore from './components/Store/HomeStore';
 import AddStore from './components/Store/AddStore';
 import UpdateStore from './components/Store/UpdateStore';
+import ImportStore from './components/Store/ImportStore';
+import InfoStore from './components/Store/InfoStore';
 
 
 function App() {
@@ -53,6 +55,11 @@ function App() {
           <Route exact path="/update-classification/:id" component={UpdateClassification} />
           <Route exact path="/update-category/:id" component={UpdateCategories} />
           <Route exact path="/update/:id" component={UpdateEmployee} />
+
+          <Route exact path="/import-store/:id" component={ImportStore} />
+          <Route exact path="/info-store/:id" component={InfoStore} />
+
+
 
           {/* <HomePage /> */}
 

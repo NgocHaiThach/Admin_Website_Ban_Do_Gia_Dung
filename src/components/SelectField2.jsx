@@ -2,12 +2,11 @@ import React from "react";
 import { ErrorMessage, useField } from "formik";
 import { Form } from "react-bootstrap";
 import Select from 'react-select';
-const SelectField2 = ({ label, options, ...props }) => {
+const SelectField2 = ({ label, dtf, options, ...props }) => {
     const [field, meta] = useField(props);
 
     const { name, value } = field;
-    const selectedOption = options.find(option => option.value === value);
-
+    const selectedOption = options?.find(option => option.value === +value);
 
     const handleSelectedOptionChange = (selectedOption) => {
         if (name === 'province') {
@@ -17,6 +16,10 @@ const SelectField2 = ({ label, options, ...props }) => {
         if (name === 'district') {
             localStorage.setItem('district', JSON.stringify(selectedOption));
             props.setReRender(props.getDistrictLocalStorage())
+        }
+        if (name === 'ward') {
+            localStorage.setItem('ward', JSON.stringify(selectedOption));
+            props.setReRender(props.getWardLocalStorage())
         }
 
         const selectedValue = selectedOption ? selectedOption.label : selectedOption;
@@ -37,8 +40,9 @@ const SelectField2 = ({ label, options, ...props }) => {
                 {...field}
                 value={selectedOption}
                 onChange={handleSelectedOptionChange}
-                defaultValue={{ label: "-----Chọn", value: 0 }}
+                defaultValue={{ label: "-----Chọn", value: null }}
                 options={options}
+                isSearchable={true}
             />
             <ErrorMessage component="div" name={field.name} className="error" style={{ color: 'red' }} />
         </div>

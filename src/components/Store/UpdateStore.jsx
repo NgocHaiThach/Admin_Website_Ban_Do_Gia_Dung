@@ -33,6 +33,7 @@ function UpdateStore(props) {
     const store = listStore.filter((item) => {
         return (item.storeId) === (+id)
     })
+    console.log(store);
     // const [store, setStore] = useState({});
 
     // const getOneStore = async () => {
@@ -44,8 +45,6 @@ function UpdateStore(props) {
     // useEffect(() => {
     //     getOneStore();
     // }, [])
-
-    // console.log(store)
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -155,6 +154,11 @@ function UpdateStore(props) {
         }
     });
 
+    const removeLocal = () => {
+        localStorage.removeItem('province')
+        localStorage.removeItem('district')
+    }
+
     return (
         <Container>
             <div className="mt-4 mb-4" style={{ fontSize: '24px', fontWeight: 'bold' }}>
@@ -165,7 +169,7 @@ function UpdateStore(props) {
                     initialValues={
                         {
                             name: store[0]?.name || "",
-                            province: "Dau Xanh",
+                            province: 'Tỉnh Trà Vinh' || "",
                             district: "",
                             ward: "",
                             detail: store[0]?.fullAddress || "",
@@ -219,6 +223,7 @@ function UpdateStore(props) {
                                         label="Xã/Phường"
                                         name="ward"
                                         type="option"
+                                        // dtf='hai'
                                         options={wardInDistrict} />
                                 </Col>
                             </Row>
@@ -227,6 +232,7 @@ function UpdateStore(props) {
                                 variant="secondary"
                                 className="mr-5"
                                 type='reset'
+                                onClick={removeLocal}
                             >
 
                                 Reset

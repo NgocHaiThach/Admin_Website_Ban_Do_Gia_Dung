@@ -6,13 +6,13 @@ import TableEmployee from './TableEmployee';
 
 function HomePage(props) {
     const titleData = [
-        // { name: 'id', field: "Id", sortable: 'none' },
+        // { name: 'id', field: "Chọn", sortable: 'none' },
         { name: 'id', field: "Mã", sortable: 'none' },
         { name: 'name', field: "Tên", sortable: 'none' },
         { name: 'category', field: "Loại", sortable: 'none' },
         { name: 'price', field: "Giá", sortable: 'none' },
         { name: 'quantity', field: "Số lượng", sortable: 'none' },
-        { name: 'modifyDate', field: "Ngày Thêm", sortable: 'none' },
+        { name: 'modifyDate', field: "Ngày tạo", sortable: 'none' },
         { name: 'actions', field: "Hoạt động", sortable: 'none' },
     ]
     const [currentPage, setCurrentPage] = useState(0);
@@ -29,8 +29,6 @@ function HomePage(props) {
     // const totalPage = Math.ceil(totalElements / sizePage);
 
     const listEmployee = useSelector(state => state.listEmployee.list);
-    console.log(listEmployee)
-
 
     const handleChange = (e) => {
         const size = e.target.value;
@@ -40,12 +38,13 @@ function HomePage(props) {
     const handleSearch = (formValue) => {
         setSearchText(formValue.searchTerm);
     }
+
     return (
         <Container>
             <Row>
                 <div className="panel panel-primary">
                     <div className="panel-heading">
-                        <h3 className="panel-title mb-40">Danh Sách Sản Phẩm</h3>
+                        <h3 className="panel-title mb-4 mt-4">Danh Sách Sản Phẩm</h3>
                     </div>
 
                     <div className="total-money">

@@ -9,6 +9,7 @@ function HomeStore(props) {
         { name: 'id', field: "Mã", sortable: 'none' },
         { name: 'classification', field: "Danh Mục", sortable: 'none' },
         { name: 'address', field: "Địa Chỉ", sortable: 'none' },
+        { name: 'action', field: "Hoạt Động", sortable: 'none' },
     ]
 
     const dispatch = useDispatch();
@@ -24,11 +25,11 @@ function HomeStore(props) {
             <Row>
                 <div className="panel panel-primary">
                     <div className="panel-heading">
-                        <h3 className="panel-title mb-40">Danh Sách Danh Mục</h3>
+                        <h3 className="panel-title mb-4 mt-4">Danh Sách Cửa Hàng</h3>
                     </div>
 
-                    <div className="total-money">
-                        Tổng sản phẩm: 10
+                    <div className="total-money mb-4" style={{ fontSize: "18px" }}>
+                        Tổng cửa hàng: {store.length}
                     </div>
 
                     <TableStore
