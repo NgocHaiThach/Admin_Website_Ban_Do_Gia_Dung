@@ -18,13 +18,6 @@ function TableEmployee({ listEmployee, titleData }) {
     const [titleTable, setTitleTable] = useState([...titleData]);
     const data = [...listEmployee];
 
-    // const renderDataValues = (data) => {
-    //     const arrayDataValues = Object.values(data);
-    //     return arrayDataValues.map((val, index) => {
-    //         return <td key={index}>{val}</td>
-    //     })
-    // }
-    // const a = useSelector(state => state.sortEmployee.list);
 
     const renderIconSort = (status, id, name) => {
         if (status === "none") {
