@@ -1,43 +1,75 @@
 import React, { useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getListEmployee } from '../../reudx/apiFuntion';
+import { getListEmployeeSuccess } from '../../reudx/listEmployeeSlice';
+import callApi from '../../utils/callApi';
+import { FormatInput } from '../../utils/format';
 import TableEmployee from './TableEmployee';
 
 function HomePage(props) {
     const titleData = [
         // { name: 'id', field: "Chọn", sortable: 'none' },
-        { name: 'id', field: "Mã", sortable: 'none' },
+        { name: 'productId', field: "Mã", sortable: 'none' },
         { name: 'name', field: "Tên", sortable: 'none' },
-        { name: 'category', field: "Loại", sortable: 'none' },
+        { name: 'categoryId', field: "Loại", sortable: 'none' },
         { name: 'price', field: "Giá", sortable: 'none' },
-        { name: 'quantity', field: "Số lượng", sortable: 'none' },
         { name: 'modifyDate', field: "Ngày tạo", sortable: 'none' },
         { name: 'actions', field: "Hoạt động", sortable: 'none' },
     ]
-    const [currentPage, setCurrentPage] = useState(0);
-    const [sizePage, setSizePage] = useState(10);
-    const [searchText, setSearchText] = useState('');
 
     const dispatch = useDispatch();
 
     useEffect(() => {
         getListEmployee(dispatch);
+        getToSearch();
     }, [])
 
-    // const totalElements = useSelector(state => state.totalElements.total)
-    // const totalPage = Math.ceil(totalElements / sizePage);
+    const getToSearch = async () => {
+        const res = await callApi('/admin/products/all', 'GET')
+        setListToSearch(res.data.result)
+    }
 
     const listEmployee = useSelector(state => state.listEmployee.list);
 
-    const handleChange = (e) => {
-        const size = e.target.value;
-        setSizePage(size);
+    const [listToSearch, setListToSearch] = useState([]);
+    const [search, setSearch] = useState('');
+    const [input, setInput] = useState('');
+    const typingTimoutRef = useRef(null);
+
+    const onSearch = (e) => {
+        const input = e.target.value
+        setSearch(input)
+
+        if (typingTimoutRef.current) {
+            clearTimeout(typingTimoutRef.current)
+        }
+
+        typingTimoutRef.current = setTimeout(() => {
+            const formvalues = {
+                search: input,
+            }
+            if (handleSearch) {
+                handleSearch(formvalues)
+            }
+        }, 300)
+
     }
 
-    const handleSearch = (formValue) => {
-        setSearchText(formValue.searchTerm);
+    //xu ly search product
+    const handleSearch = (input) => {
+        const val = FormatInput(input.search)
+        const filter = listToSearch.filter((item) => {
+            const name = FormatInput(item.name)
+            if (name.includes(val)) {
+                return item
+            }
+        });
+        dispatch(getListEmployeeSuccess(filter));
+        setInput(input);
     }
+
 
     return (
         <Container>
@@ -47,33 +79,23 @@ function HomePage(props) {
                         <h3 className="panel-title mb-4 mt-4">Danh Sách Sản Phẩm</h3>
                     </div>
 
-                    <div className="total-money">
-                        Tổng sản phẩm: ...
+                    <form className='search-product mb-20' >
+                        <input className='search__input'
+                            placeholder='Loại sản phẩm bạn muốn tìm...'
+                            value={search}
+                            onChange={onSearch}
+                            style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                        />
+                    </form>
+
+                    <div className="total-money mb-4">
+                        Tổng sản phẩm: {listEmployee.length}
                     </div>
 
                     <div className="form-action">
-                        {/* <ErrorBoundary> */}
-                        {/* <SearchForm onSubmit={handleSearch} /> */}
-                        {/* <Form.Select
-                            onChange={handleChange}
-                            className="col-lg-12 select-size-page"
-                            aria-label="Default select example">
-                            <option>Chọn kích thước trang</option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                        </Form.Select> */}
-                        {/* </ErrorBoundary> */}
+
                     </div>
-                    {/* <ErrorBoundary> */}
                     <TableEmployee listEmployee={listEmployee} titleData={titleData} />
-                    {/* <PaginationData currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        sizePage={sizePage}
-                        totalPage={totalPage}
-                    /> */}
-                    {/* </ErrorBoundary> */}
                 </div>
             </Row>
         </Container>

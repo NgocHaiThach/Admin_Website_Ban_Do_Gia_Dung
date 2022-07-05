@@ -88,7 +88,7 @@ function HomeClassification(props) {
                     </form>
 
                     <div className="total-money mb-3">
-                        Tổng sản phẩm: {listClassification.length}
+                        Tổng danh mục: {listClassification.length}
                     </div>
 
                     <TableClassification

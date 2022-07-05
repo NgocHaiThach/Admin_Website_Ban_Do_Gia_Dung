@@ -29,6 +29,7 @@ import AddStore from './components/Store/AddStore';
 import UpdateStore from './components/Store/UpdateStore';
 import ImportStore from './components/Store/ImportStore';
 import InfoStore from './components/Store/InfoStore';
+import SideBar from './components/SideBar';
 
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Menu />
+        <div className="d-flex">
+        <SideBar/>
         <Switch>
           <Redirect exact from="/" to="/list" />
           <Route exact path="/list" component={HomePage} />
@@ -64,6 +67,7 @@ function App() {
           {/* <HomePage /> */}
 
         </Switch>
+        </div>
       </BrowserRouter>
     </div>
   );

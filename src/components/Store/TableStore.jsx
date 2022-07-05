@@ -22,7 +22,6 @@ function TableStore({ store, titleData }) {
         handleClose();
         history.push('/stores');
     }
-    console.log(data)
 
     return (
         <div className="panel-body">

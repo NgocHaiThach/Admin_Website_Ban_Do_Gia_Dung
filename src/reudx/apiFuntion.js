@@ -116,13 +116,13 @@ export const searchListEmployee = async (dispatch, currentPage, sizePage, search
 
 // set List Employee sort
 export const setListEmployee = async (dispatch, list) => {
-    //     dispatch(getListEmployeeStart)
-    //     try {
-    //         dispatch(getListEmployeeSuccess(list))
-    //     }
-    //     catch (err) {
-    //         dispatch(getListEmployeeFailure(err))
-    //     }
+        dispatch(getListEmployeeStart)
+        try {
+            dispatch(getListEmployeeSuccess(list))
+        }
+        catch (err) {
+            dispatch(getListEmployeeFailure(err))
+        }
 }
 
 // List Employee

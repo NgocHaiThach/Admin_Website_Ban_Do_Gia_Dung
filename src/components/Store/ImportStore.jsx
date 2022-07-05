@@ -13,6 +13,7 @@ function ImportStore(props) {
         { name: 'id', field: "Chọn", sortable: 'none' },
         { name: 'id', field: "Mã", sortable: 'none' },
         { name: 'name', field: "Tên", sortable: 'none' },
+        { name: 'quantity', field: "Nhập số lượng", sortable: 'none' },
         { name: 'category', field: "Loại", sortable: 'none' },
         { name: 'price', field: "Giá", sortable: 'none' },
         { name: 'modifyDate', field: "Ngày Tạo", sortable: 'none' },
@@ -74,20 +75,14 @@ function ImportStore(props) {
     }
 
 
-
     const onActions = async (data) => {
         if (valueSelect === "import") {
             if (data.length > 0) {
-                if (quantity > 0) {
-                    await callApi("/storeds/import", "POST", {
-                        storeId: id,
-                        products: data
-                    });
-                    handleShow();
-                }
-                else {
-                    alert('Vui lòng chọn số lượng sản phẩm');
-                }
+                await callApi("/storeds/import", "POST", {
+                    storeId: id,
+                    products: data
+                });
+                handleShow();
             }
             else {
                 alert('Vui lòng chọn sản phẩm');
@@ -95,25 +90,20 @@ function ImportStore(props) {
         }
         else if (valueSelect === "export") {
             if (data.length > 0) {
-                if (quantity > 0) {
-                    await callApi("/storeds/export", "POST", {
-                        storeId: id,
-                        products: data
+                await callApi("/storeds/export", "POST", {
+                    storeId: id,
+                    products: data
+                })
+                    .then(res => {
+                        if (res.status === 200) {
+                            handleShow();
+                        }
                     })
-                        .then(res => {
-                            if (res.status === 200) {
-                                handleShow();
-                            }
-                        })
-                        .catch(err => {
-                            console.log(err)
-                            alert('Số lượng sản phẩm không đủ để thực hiện xuất hàng. Vui lòng kiểm tra lại')
+                    .catch(err => {
+                        console.log(err)
+                        alert('Số lượng sản phẩm không đủ để thực hiện xuất hàng. Vui lòng kiểm tra lại')
 
-                        })
-                }
-                else {
-                    alert('Vui lòng chọn số lượng sản phẩm');
-                }
+                    })
             }
             else {
                 alert('Vui lòng sản phẩm');
@@ -153,7 +143,7 @@ function ImportStore(props) {
                                 <option style={{ textAlign: 'center' }} value="import">Nhập hàng</option>
                                 <option style={{ textAlign: 'center' }} value="export">Xuất hàng</option>
                             </select>
-                            <select onChange={e => setQuantity(+e.target.value)} className="col-md-3" name="action" required style={{ marginLeft: '20px' }}>
+                            {/* <select onChange={e => setQuantity(+e.target.value)} className="col-md-3" name="action" required style={{ marginLeft: '20px' }}>
                                 <option style={{ textAlign: 'center' }} value="none">-- Chọn số lượng--</option>
                                 <option style={{ textAlign: 'center' }} value="50">50</option>
                                 <option style={{ textAlign: 'center' }} value="100">100</option>
@@ -162,7 +152,7 @@ function ImportStore(props) {
                                 <option style={{ textAlign: 'center' }} value="300">300</option>
                                 <option style={{ textAlign: 'center' }} value="400">400</option>
                                 <option style={{ textAlign: 'center' }} value="500">500</option>
-                            </select>
+                            </select> */}
                         </div>
 
 

@@ -72,7 +72,7 @@ function HomeSpecification(props) {
             <Row>
                 <div className="panel panel-primary">
                     <div className="panel-heading">
-                        <h3 className="panel-title mb-40 mt-4">Danh Sách Danh Mục</h3>
+                        <h3 className="panel-title mb-40 mt-4">Danh Sách Thông Số</h3>
                     </div>
 
 
@@ -86,7 +86,7 @@ function HomeSpecification(props) {
                     </form>
 
                     <div className="total-money mb-3" style={{ fontSize: '20px' }}>
-                        Tổng sản phẩm: {listSpecification.length}
+                        Tổng thông số: {listSpecification.length}
                     </div>
 
                     <TableSpecification

@@ -22,25 +22,23 @@ function TableEmployee({ listEmployee, titleData }) {
     const renderIconSort = (status, id, name) => {
         if (status === "none") {
             return (
-                <i
+                <i className="fa-solid fa-arrow-down-wide-short"
                     onClick={() => changeSortStatus(id, name)}
-                    className="bi bi-sort-down-alt"
                     style={{ marginLeft: '15px' }}>
                 </i>
             );
         }
         else if (status === 'desc') {
             return (
-                <i className="bi bi-sort-down"
+                <i className="fa-solid fa-arrow-down-wide-short"
                     onClick={() => changeSortStatus(id, name)}
                     style={{ marginLeft: '15px' }}></i>
             )
         }
         else if (status === "asc") {
             return (
-                <i
+                <i className="fa-solid fa-arrow-down-wide-short"
                     onClick={() => changeSortStatus(id, name)}
-                    className="bi bi-sort-down-alt"
                     style={{ marginLeft: '15px' }}>
                 </i>
             );
@@ -50,22 +48,19 @@ function TableEmployee({ listEmployee, titleData }) {
     const changeSortStatus = (id, field) => {
         titleTable?.forEach((item, index) => {
             if (index === id) {
-                console.log(id)
                 if (item.sortable === 'none' || item.sortable === 'desc') {
                     item.sortable = 'asc';
                     data.sort((a, b) => {
                         if (typeof a[field] === 'number') {
+
                             return a[field] - b[field];
                         }
                         else if (typeof a[field] === 'string') {
                             return a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1;
                         }
 
-                        console.log('datatable', a[field])
-
                     })
                     setListEmployee(dispatch, data);
-                    console.log('datatable', data)
                 }
                 else if (item.sortable === 'asc') {
                     item.sortable = 'desc';
@@ -103,7 +98,7 @@ function TableEmployee({ listEmployee, titleData }) {
                         {titleData.map((title, index) => (
                             <th key={index}>
                                 {title.field}
-                                {/* {renderIconSort(title.sortable, index, title.name)} */}
+                                {renderIconSort(title.sortable, index, title.name)}
                             </th>
                         ))}
                     </tr>
@@ -112,14 +107,13 @@ function TableEmployee({ listEmployee, titleData }) {
                     <tbody key={index}>
                         <tr key={index}>
                             {/* {renderDataValues(employee)} */}
-                            {/* <td>  <div class="form-check">
-                                <input class="form-check-input" type="checkbox" />
+                            {/* <td>  <div className="form-check">
+                                <input className="form-check-input" type="checkbox" />
                             </div></td> */}
                             <td>{employee.productId}</td>
                             <td>{employee.name}</td>
                             <td>{employee.categoryId}</td>
                             <td>{formatPrice(employee.price)}đ</td>
-                            <td>100 </td>
                             <td>{formatDate(employee.modifyDate)}</td>
                             <td className="col-lg-3">
                                 <Button variant="success" className="mr-5">
