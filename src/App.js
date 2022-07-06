@@ -38,7 +38,7 @@ function App() {
       <BrowserRouter>
         <Menu />
         <div className="d-flex">
-        <SideBar/>
+        {/* <SideBar/> */}
         <Switch>
           <Redirect exact from="/" to="/list" />
           <Route exact path="/list" component={HomePage} />

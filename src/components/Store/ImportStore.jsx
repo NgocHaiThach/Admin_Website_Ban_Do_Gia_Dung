@@ -143,19 +143,7 @@ function ImportStore(props) {
                                 <option style={{ textAlign: 'center' }} value="import">Nhập hàng</option>
                                 <option style={{ textAlign: 'center' }} value="export">Xuất hàng</option>
                             </select>
-                            {/* <select onChange={e => setQuantity(+e.target.value)} className="col-md-3" name="action" required style={{ marginLeft: '20px' }}>
-                                <option style={{ textAlign: 'center' }} value="none">-- Chọn số lượng--</option>
-                                <option style={{ textAlign: 'center' }} value="50">50</option>
-                                <option style={{ textAlign: 'center' }} value="100">100</option>
-                                <option style={{ textAlign: 'center' }} value="150">150</option>
-                                <option style={{ textAlign: 'center' }} value="200">200</option>
-                                <option style={{ textAlign: 'center' }} value="300">300</option>
-                                <option style={{ textAlign: 'center' }} value="400">400</option>
-                                <option style={{ textAlign: 'center' }} value="500">500</option>
-                            </select> */}
                         </div>
-
-
                     </div>
                 </div>
             </Form>

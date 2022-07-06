@@ -16,20 +16,19 @@ export const getListEmployee = async (dispatch) => {
     }
 }
 
-
 // ADD: one product
 export const addEmployee = async (dispatch,
     id,
     name,
     category,
     price,
-    quantity,
     description,
     avatar,
-    image1,
-    image2,
-    image3,
-    image4,) => {
+    contentPicture,
+    weight,
+    length,
+    width,
+    height,) => {
 
     dispatch(addEmployeeStart)
     try {
@@ -43,10 +42,14 @@ export const addEmployee = async (dispatch,
                 content: avatar,
                 isUrl: true,
             },
-            images: [image1, image2, image3, image4].map(image => ({
+            images: contentPicture.map(image => ({
                 content: image,
-                isUrl: true,
-            }))
+                isUrl: false,
+            })),
+            weight: weight,
+            length: length,
+            width: width,
+            height: height,
         })
     }
     catch (err) {

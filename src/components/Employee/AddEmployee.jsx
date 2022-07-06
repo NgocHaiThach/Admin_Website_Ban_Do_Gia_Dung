@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import { FastField, Form, Formik } from 'formik';
-import { Button, Container, FormGroup, FormLabel, InputGroup, Modal, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import InputField from '../InputField';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Container, Modal, Row } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from "yup";
 import { addEmployee } from '../../reudx/apiFuntion';
-import { useDispatch, useSelector } from 'react-redux';
-import SelectField from '../SelectField';
 import { getListCategory } from '../../reudx/Categories/apiFuntionCategory';
+import { getListSpecification } from '../../reudx/Specification/apiSpecification';
+import InputField from '../InputField';
+import SelectField from '../SelectField';
+import SubTable from './SubTable';
+
 
 
 
@@ -24,20 +26,25 @@ function AddEmployee(props) {
             .required("Trường này bắt buộc"),
         price: Yup.string()
             .required("Trường này bắt buộc"),
-        quantity: Yup.string()
-            .required("Trường này bắt buộc"),
         avatar: Yup.string()
             .required("Trường này bắt buộc"),
-        image1: Yup.string()
+        weight: Yup.number()
             .required("Trường này bắt buộc"),
-        image2: Yup.string()
+        length: Yup.number()
             .required("Trường này bắt buộc"),
-        image3: Yup.string()
+        width: Yup.number()
             .required("Trường này bắt buộc"),
-        image4: Yup.string()
+        height: Yup.number()
             .required("Trường này bắt buộc"),
-
     });
+
+
+    const titleData = [
+        { name: 'choose', field: "Chọn", sortable: 'none' },
+        { name: 'id', field: "Mã", sortable: 'none' },
+        { name: 'name', field: "Tên", sortable: 'none' },
+        { name: 'quantity', field: "Nhập giá trị", sortable: 'none' },
+    ]
 
 
     const [show, setShow] = useState(false);
@@ -47,8 +54,11 @@ function AddEmployee(props) {
 
     useEffect(() => {
         getListCategory(dispatch);
-    }, [])
+        getListSpecification(dispatch);
+    }, []);
+
     const listCategory = useSelector(state => state.category.list);
+    const listSpecification = useSelector(state => state.specification.list)
 
     let CATEGORY_OPTIONS = [];
     for (let i = 1; i <= listCategory.length; i++) {
@@ -57,76 +67,79 @@ function AddEmployee(props) {
             label: listCategory[i]?.categoryId
         })
     }
-    // const CATEGORY_OPTIONS = [
-    //     { value: 1, label: 'Technology' },
-    //     { value: 2, label: 'Education' },
-    //     { value: 3, label: 'Nature' },
-    //     { value: 4, label: 'Animals' },
-    //     { value: 5, label: 'Styles' },
-    // ];
+
+    const inputFile = useRef(null);
+
+    const [selectedFile, setSelectedFile] = useState([]);
+    const [preview, setPreview] = useState([]);
+    const [contentPicture, setContentPicure] = useState([]);
+
+    useEffect(() => {
+        if (!selectedFile) {
+            setPreview(undefined)
+            return
+        }
+        let objectUrl = '';
+        selectedFile?.map((item) => {
+            objectUrl = URL.createObjectURL(item)
+        })
+        setPreview((p) => [...p, objectUrl])
+
+        // free memory when ever this component is unmounted
+        return () => {
+            selectedFile.map(item => {
+                URL.revokeObjectURL(item)
+            })
+        }
+    }, [selectedFile])
+
+    const onSelectFile = e => {
+        if (!e.target.files || e.target.files.length === 0) {
+            setSelectedFile(undefined)
+            return
+        }
+
+        // I've kept this example simple by using the first image instead of multiples
+        setSelectedFile((p) => [...p, e.target.files[0]]);
+        getBase64(e.target.files[0]);
+    }
+
+    const onLoad = fileString => {
+        var strImage = fileString.replace(/^data:image\/[a-z]+;base64,/, "");
+        setContentPicure((p) => [...p, strImage]);
+    };
+
+    const getBase64 = file => {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            onLoad(reader.result);
+        };
+    };
 
     return (
-        <Container className='mb-40'>
+        <Container className='mb-5 mt-5'>
+            <h3 className='mb-4'>Thêm sản phẩm</h3>
             <Row>
                 <Formik
                     initialValues={
                         {
-                            id: "",
-                            name: "",
-                            category: "",
-                            price: "",
-                            quantity: "",
-                            description: "",
-                            avatar: "",
-                            image1: "",
-                            image2: "",
-                            image3: "",
-                            image4: "",
-
+                            id: "", name: "", category: "",
+                            price: "", quantity: "", description: "",
+                            avatar: "", weight: "", length: "", width: "", height: "",
                         }
                     }
                     validationSchema={validate}
                     onSubmit={(values) => {
                         const {
-                            id,
-                            name,
-                            category,
-                            price,
-                            quantity,
-                            description,
-                            avatar,
-                            image1,
-                            image2,
-                            image3,
-                            image4,
+                            id, name, category, price, description,
+                            avatar, weight, length, width, height,
                         } = values;
 
-                        console.log(
-                            id,
-                            name,
-                            category,
-                            price,
-                            quantity,
-                            description,
-                            avatar,
-                            image1,
-                            image2,
-                            image3,
-                            image4,
-                        )
-
                         addEmployee(dispatch,
-                            id,
-                            name,
-                            category,
-                            price,
-                            quantity,
-                            description,
-                            avatar,
-                            image1,
-                            image2,
-                            image3,
-                            image4)
+                            id, name, category, price, description,
+                            avatar, contentPicture, weight,
+                            length, width, height)
                         handleShow()
                     }}
                 >
@@ -143,18 +156,40 @@ function AddEmployee(props) {
                                 placeholder="Mã loại sản phẩm"
                                 options={CATEGORY_OPTIONS}
                             />
+
                             <InputField label="Giá" name="price" type="text" />
-                            <InputField label="Số lượng" name="quantity" type="text" />
                             <InputField label="Mô tả" name="description" type="text" />
                             <InputField label="Avatar" name="avatar" type="text" />
-                            <InputField label="Ảnh 1" name="image1" type="text" />
-                            <InputField label="Ảnh 2" name="image2" type="text" />
-                            <InputField label="Ảnh 3" name="image3" type="text" />
-                            <InputField label="Ảnh 4" name="image4" type="text" />
+                            <InputField label="Khối lượng" name="weight" type="text" />
+                            <InputField label="Độ dài" name="length" type="text" />
+                            <InputField label="Chiều dài" name="width" type="text" />
+                            <InputField label="Chiều cao" name="height" type="text" />
+
+                            <div>
+                                <span>Ảnh mô tả</span>
+                                <div>
+                                    <input
+                                        ref={inputFile}
+                                        // style={{ display: 'none' }}
+                                        id="file"
+                                        type="file"
+                                        onChange={(e) => onSelectFile(e)}
+                                    />
+                                    {(preview?.slice(1))?.map((i, index) => (
+                                        <img
+                                            key={index}
+                                            src={i}
+                                            style={{ width: '50px', height: '50px', margin: '0 10px' }}
+                                            alt="img"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
 
                             <Button
                                 variant="secondary"
-                                className="mr-5"
+                                className="mr-5 mt-4"
                                 type='reset'
                             >
 
@@ -162,7 +197,7 @@ function AddEmployee(props) {
                             </Button>
                             <Button
                                 variant="primary"
-                                className="ml-5"
+                                className="ml-5 mt-4"
                                 type="submit"
                             >
                                 Thêm Sản Phẩm
@@ -171,6 +206,7 @@ function AddEmployee(props) {
                         </Form>
                     )}
                 </Formik>
+                <SubTable titleData={titleData} listSpecification={listSpecification} />
             </Row>
 
 
