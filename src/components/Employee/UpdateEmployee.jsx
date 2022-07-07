@@ -1,11 +1,19 @@
-import { Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import { Button, Container, Modal } from 'react-bootstrap';
+import { Form, Formik, FastField } from 'formik';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Container, Modal, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as Yup from "yup";
-import { updateOneEmployee, updateOneProduct } from '../../reudx/apiFuntion';
+import { setListEmployee, updateOneEmployee, updateOneProduct } from '../../reudx/apiFuntion';
+import { getListCategory } from '../../reudx/Categories/apiFuntionCategory';
 import InputField from '../InputField';
+import SelectField from '../SelectField';
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useFieldArray, useForm } from "react-hook-form";
+import { getListSpecification } from '../../reudx/Specification/apiSpecification';
+
+
 
 
 
@@ -19,24 +27,30 @@ function UpdateEmployee(props) {
             .max(50, "Tên phải ngắn hơn 50 ký tự")
             .required("Trường này bắt buộc"),
         category: Yup.string()
-            .max(50, "Loại phải ngắn hơn 50 ký tự")
             .required("Trường này bắt buộc"),
         price: Yup.string()
             .required("Trường này bắt buộc"),
-        quantity: Yup.string()
-            .required("Trường này bắt buộc"),
         avatar: Yup.string()
             .required("Trường này bắt buộc"),
-        image1: Yup.string()
+        weight: Yup.string()
             .required("Trường này bắt buộc"),
-        image2: Yup.string()
+        length: Yup.string()
             .required("Trường này bắt buộc"),
-        image3: Yup.string()
+        width: Yup.string()
             .required("Trường này bắt buộc"),
-        image4: Yup.string()
+        height: Yup.string()
+            .required("Trường này bắt buộc"),
+        highlights: Yup.string()
             .required("Trường này bắt buộc"),
 
     });
+
+    const titleData = [
+        { name: 'choose', field: "Chọn", sortable: 'none' },
+        { name: 'id', field: "Mã", sortable: 'none' },
+        { name: 'name', field: "Tên", sortable: 'none' },
+        { name: 'quantity', field: "Nhập giá trị", sortable: 'none' },
+    ]
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -52,26 +66,179 @@ function UpdateEmployee(props) {
         return item.productId === id
     })
 
-    console.log(listEmployee)
+    useEffect(() => {
+        getListCategory(dispatch);
+        getListSpecification(dispatch);
+    }, []);
+    const listCategory = useSelector(state => state.category.list);
+    const listSpecification = useSelector(state => state.specification.list);
+
+
+    let CATEGORY_OPTIONS = [];
+    for (let i = 1; i <= listCategory.length; i++) {
+        CATEGORY_OPTIONS.push({
+            value: listCategory[i]?.categoryId,
+            label: listCategory[i]?.categoryId
+        })
+    }
+
+    const [product, setProduct] = useState({
+        id: listEmployee[0]?.productId,
+        name: listEmployee[0]?.name,
+        category: listEmployee[0]?.categoryId,
+        price: listEmployee[0]?.price,
+        description: listEmployee[0]?.highlights,
+        avatar: listEmployee[0]?.avatar,
+        weight: listEmployee[0]?.weight,
+        length: listEmployee[0]?.length,
+        height: listEmployee[0]?.height,
+        width: listEmployee[0]?.width,
+
+        view: listEmployee[0]?.view,
+
+    })
+    const specifications = listEmployee[0]?.specifications;
+    const [images, setImages] = useState(listEmployee[0]?.images);
+    let a = listEmployee[0]?.images;
+
+    const { register, control, handleSubmit, reset, trigger, setError, formState: { errors } } = useForm({
+        // defaultValues: {}; you can populate the fields by this attribute 
+        resolver: yupResolver(validate)
+    });
+    const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+        control, // control props comes from useForm (optional: if you are using FormContext)
+        name: "test", // unique name for your Field Array
+    });
+    const onSubmit = (data, e) => {
+        // e.preventDefault();
+        const { avatar, category, height, highlights, id, length, name, price, weight, width } = data;
+
+        const b = []
+
+        for (const property in data.test) {
+            if (data.test[property].value !== "") {
+                b.push({ specificationId: property, value: data.test[property].value });
+            }
+        }
+
+        console.log(avatar, category, height, highlights, id, length, name, price, weight, width, b)
+
+        const newImages = contentPicture.concat(images);
+        console.log("content", newImages);
+        // for (let i = 0; i < listObjId.length; i++) {
+        //     for (let j = 0; j < b.length; j++) {
+        //         if (listObjId[i].specificationId === b[j].id) {
+        //             // if (listObjId[i].productId === b[j].key) {
+        //             listObjId[i].value = b[j].value;
+        //             // }
+        //         }
+        //     }
+        // }
+
+        // const description = highlights.split("; ");
+
+        // listObjId = listObjId.filter((item) => item.value !== 'none' && item.value !== undefined);
+
+        // addEmployee(dispatch,
+        //     id, name, category, price, highlights,
+        //     avatar, contentPicture, weight,
+        //     length, width, height, listObjId,
+        // );
+        // handleShow();
+    }
+
+    const [checked, setChecked] = useState([]);
+
+    const handleCheck = (id) => {
+
+        setChecked(prev => {
+            const isChecked = checked.includes(id);
+            if (isChecked) {
+
+                return checked.filter(item => item !== id)
+            }
+            else {
+                return [...prev, id,]
+            }
+        })
+    }
+    const inputFile = useRef(null);
+
+
+    const [selectedFile, setSelectedFile] = useState([]);
+    const [preview, setPreview] = useState([]);
+    const [contentPicture, setContentPicure] = useState([]);
+
+    useEffect(() => {
+        if (!selectedFile) {
+            setPreview(undefined)
+            return
+        }
+        let objectUrl = '';
+        selectedFile?.map((item) => {
+            objectUrl = URL.createObjectURL(item)
+        })
+        setImages((p) => [...p, objectUrl])
+
+        // free memory when ever this component is unmounted
+        return () => {
+            selectedFile.map(item => {
+                URL.revokeObjectURL(item)
+            })
+        }
+    }, [selectedFile])
+
+
+    const onSelectFile = e => {
+        if (!e.target.files || e.target.files.length === 0) {
+            setSelectedFile(undefined)
+            return
+        }
+
+        // I've kept this example simple by using the first image instead of multiples
+        setSelectedFile((p) => [...p, e.target.files[0]]);
+        getBase64(e.target.files[0]);
+    }
+
+    const onLoad = fileString => {
+        var strImage = fileString.replace(/^data:image\/[a-z]+;base64,/, "");
+        setContentPicure((p) => [...p, strImage]);
+    };
+
+    const getBase64 = file => {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            onLoad(reader.result);
+        };
+    };
+
+
+    const deleteImage = (index) => {
+        setImages(images.filter(item => item !== images[index]));
+    }
 
 
     return (
+        product &&
         <Container className="mb-40">
-            <div>avb</div>
-            <Formik
+            <Row>
+                {/* <Formik
                 initialValues={
                     {
                         id: listEmployee[0].productId,
                         name: listEmployee[0].name,
                         category: listEmployee[0].categoryId,
                         price: listEmployee[0].price,
-                        quantity: 100,
                         description: listEmployee[0]?.highlights,
                         avatar: listEmployee[0]?.avatar,
-                        image1: listEmployee[0]?.images[0],
-                        image2: listEmployee[0]?.images[1],
-                        image3: listEmployee[0]?.images[2],
-                        image4: listEmployee[0]?.images[3],
+                        weight: listEmployee[0]?.weight,
+                        length: listEmployee[0]?.length,
+                        height: listEmployee[0]?.height,
+                        width: listEmployee[0]?.width,
+                        images: listEmployee[0]?.images,
+                        view: listEmployee[0]?.view,
+                        specifications: listEmployee[0]?.specifications,
                     }
                 }
                 validationSchema={validate}
@@ -120,15 +287,19 @@ function UpdateEmployee(props) {
                     <Form>
                         <InputField label="Mã" name="id" type="text" />
                         <InputField label="Tên" name="name" type="text" />
-                        <InputField label="Loại" name="category" type="text" />
+                        <FastField
+                            name="category"
+                            component={SelectField}
+
+                            label="Loại"
+                            placeholder="Mã loại sản phẩm"
+                            options={CATEGORY_OPTIONS}
+                        />
                         <InputField label="Giá" name="price" type="text" />
-                        <InputField label="Số lượng" name="quantity" type="text" />
+
                         <InputField label="Mô tả" name="description" type="text" />
                         <InputField label="Avatar" name="avatar" type="text" />
-                        <InputField label="Ảnh 1" name="image1" type="text" />
-                        <InputField label="Ảnh 2" name="image2" type="text" />
-                        <InputField label="Ảnh 3" name="image3" type="text" />
-                        <InputField label="Ảnh 4" name="image4" type="text" />
+                       
 
                         <Button
                             variant="secondary"
@@ -147,7 +318,229 @@ function UpdateEmployee(props) {
                         </Button>
                     </Form>
                 )}
-            </Formik>
+            </Formik> */}
+            </Row>
+
+            <Row>
+                <div className="panel-body mt-4">
+                    <form onSubmit={handleSubmit(onSubmit)}>
+
+                        <p className="form-group">
+                            <label>Mã Sản Phẩm</label>
+                            <input
+                                name="id"
+                                className="form-control max-width"
+                                type="text"
+                                defaultValue={product?.id}
+                                {...register("id")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.id?.type === "required" && <p className="valid-form__message">* Vui lòng nhập mã sản phẩm</p>}
+                        {errors?.id?.type === "max" && <p className="valid-form__message">* Tên phải ngắn hơn 10 ký tự</p>}
+
+                        <p className="form-group">
+                            <label>Tên Sản Phẩm</label>
+                            <input
+                                name="name"
+                                className="form-control max-width"
+                                type="text"
+                                defaultValue={product?.name}
+                                {...register("name")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.name?.type === "required" && <p className="valid-form__message">* Vui lòng nhập tên sản phẩm</p>}
+                        {errors?.name?.type === "max" && <p className="valid-form__message">* Tên phải ngắn hơn 50 ký tự</p>}
+
+                        <p className="form-group">
+                            <label>Giá sản phẩm</label>
+                            <input
+                                name="price"
+                                className="form-control max-width"
+                                type="text"
+                                defaultValue={product?.price}
+                                {...register("price")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.price?.type === "required" && <p className="valid-form__message">* Vui lòng nhập giá sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Avatar sản phẩm</label>
+                            <input
+                                name="avatar"
+                                className="form-control max-width"
+                                defaultValue={product?.avatar}
+                                type="text"
+                                {...register("avatar")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.avatar?.type === "required" && <p className="valid-form__message">* Vui lòng nhập link avatar sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Loại Sản Phẩm</label>
+                            <br />
+                            <select className="form-control max-width"  {...register("category")}>
+                                <option selected value={product?.category}>{product?.category}</option>
+
+                                {CATEGORY_OPTIONS?.map((item, index) => (
+                                    <option key={index} value={item.value}>{item.label}</option>
+                                ))}
+                            </select>
+                        </p>
+                        {errors?.category?.type === "required" && <p className="valid-form__message">* Vui chọn loại sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Khối lượng sản phẩm</label>
+                            <input
+                                name="weight"
+                                className="form-control max-width"
+                                defaultValue={product?.weight}
+                                type="text"
+                                {...register("weight")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.weight?.type === "required" && <p className="valid-form__message">* Vui lòng nhập khối lượng sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Chiều dài sản phẩm</label>
+                            <input
+                                name="length"
+                                className="form-control max-width"
+                                defaultValue={product?.length}
+                                type="text"
+                                {...register("length")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.length?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều dài sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Chiều rộng sản phẩm</label>
+                            <input
+                                name="width"
+                                className="form-control max-width"
+                                defaultValue={product?.width}
+                                type="text"
+                                {...register("width")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.width?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều rộng sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Chiều cao sản phẩm</label>
+                            <input
+                                name="height"
+                                className="form-control max-width"
+                                defaultValue={product?.height}
+                                type="text"
+                                {...register("height")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.height?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều cao sản phẩm</p>}
+
+                        <p className="form-group">
+                            <label>Mô tả sản phẩm</label>
+                            <input
+                                name="highlights"
+                                className="form-control max-width"
+                                defaultValue={product?.description}
+                                type="text"
+                                {...register("highlights")}
+                                onChange={(e) => setProduct(e.target.value)}
+                            />
+                        </p>
+                        {errors?.highlights?.type === "required" && <p className="valid-form__message">* Vui lòng nhập đặc điểm sản phẩm</p>}
+
+                        <label>Thông số sản phẩm</label>
+                        <Table className="mt-2" striped bordered hover style={{ width: '800px' }}>
+                            <thead>
+                                <tr>
+                                    {titleData.map((title, index) => (
+                                        <th key={index}>
+                                            {title.field}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            {listSpecification?.map((spec, index) => (
+                                <tbody key={index}>
+                                    <tr key={index}>
+                                        {/* <td>
+                                            <div className="form-check">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    checked={checked.includes(spec.specificationId)}
+                                                    onChange={() => handleCheck(spec.specificationId)}
+                                                />
+                                            </div>
+                                        </td> */}
+                                        <td>{spec.specificationId}</td>
+                                        <td>{spec.name}</td>
+                                        <td>
+                                            <input
+                                                defaultValue={specifications[index]?.value}
+                                                {...register(`test.${spec.specificationId}.value`)}
+                                            // onChange={(e) => setProduct(e.target.value)}
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            ))}
+                            <tfoot>
+                                <tr>
+                                    {titleData.map((title, index) => (
+                                        <th key={index}>{title.field}</th>
+                                    ))}
+                                </tr>
+                            </tfoot>
+                        </Table>
+
+                        <div>
+                            <span>Ảnh mô tả</span>
+                            <div>
+                                <input
+                                    ref={inputFile}
+                                    id="file"
+                                    type="file"
+                                    onChange={(e) => onSelectFile(e)}
+                                />
+                                {images?.map((i, index) => (
+                                    <span key={index}>
+                                        <img
+                                            key={index}
+                                            src={i}
+                                            style={{ width: '50px', height: '50px', margin: '0 10px' }}
+                                            alt="img"
+                                        />
+                                        <span onClick={() => deleteImage(index)}>&times;</span>
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            className="col-md-2 mt-3 mb-3"
+                            style={{ marginLeft: '15px' }}
+                        // onClick={handleActions}
+
+                        >
+                            Xác nhận
+                        </Button>
+                    </form>
+                </div>
+            </Row>
+
+
+
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

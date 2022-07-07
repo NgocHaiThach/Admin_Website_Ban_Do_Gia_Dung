@@ -28,7 +28,8 @@ export const addEmployee = async (dispatch,
     weight,
     length,
     width,
-    height,) => {
+    height,
+    specifications) => {
 
     dispatch(addEmployeeStart)
     try {
@@ -50,6 +51,8 @@ export const addEmployee = async (dispatch,
             length: length,
             width: width,
             height: height,
+            specifications: specifications,
+            enable: true,
         })
     }
     catch (err) {
