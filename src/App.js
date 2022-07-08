@@ -29,17 +29,23 @@ import AddStore from './components/Store/AddStore';
 import UpdateStore from './components/Store/UpdateStore';
 import ImportStore from './components/Store/ImportStore';
 import InfoStore from './components/Store/InfoStore';
+import BillList from './components/BillList/BillList';
 import SideBar from './components/SideBar';
-
+import Login from './components/Login/Login';
 
 function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Menu />
-        <div className="d-flex">
-        {/* <SideBar/> */}
-        <Switch>
+
+  const LoginContainer = (adminInfo) => (
+    <>
+      <Redirect exact="/" to="/login" />
+      <Route path="/login" component={Login} />
+    </>
+  )
+
+  const DefaultContainer = () => (
+    <div style={{width: '100%'}}>
+      <Menu />
+      <>
           <Redirect exact from="/" to="/list" />
           <Route exact path="/list" component={HomePage} />
           <Route exact path="/classification" component={HomeClassification} />
@@ -62,12 +68,21 @@ function App() {
           <Route exact path="/import-store/:id" component={ImportStore} />
           <Route exact path="/info-store/:id" component={InfoStore} />
 
+          <Route exact path="/bills" component={BillList} />
+      </>
+    </div>
+      
+  )
 
+  return (
+    <div className="App">
+      <BrowserRouter>
 
-          {/* <HomePage /> */}
-
+        <Switch>
+          <Route exact path="/(login)" component={LoginContainer} />
+          <Route component={DefaultContainer} />
         </Switch>
-        </div>
+
       </BrowserRouter>
     </div>
   );

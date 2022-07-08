@@ -1,8 +1,19 @@
 import React from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import cookies from 'react-cookies';
+
 
 function Menu(props) {
+
+    const adminInfo = cookies.load('admin')
+    const history = useHistory()
+
+    const handleLogout = () => {
+        cookies.remove('admin')
+        history.push('/login')
+    }
+
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -75,6 +86,15 @@ function Menu(props) {
                                 </Link>
                             </NavDropdown.Item>
                         </NavDropdown>
+                        {/* <Nav.Item> */}
+                        <Link className="menu__link" to="/bills">
+                            Quản lý đơn hàng
+                        </Link>
+                        {/* <Nav.Link href="/bills">Quản lý đơn hàng</Nav.Link> */}
+                        {/* </Nav.Item> */}
+                        <p className="menu__link" onClick={handleLogout}>
+                            Đăng xuất
+                        </p>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
