@@ -46,7 +46,7 @@ function UpdateEmployee(props) {
     });
 
     const titleData = [
-        { name: 'choose', field: "Chọn", sortable: 'none' },
+        // { name: 'choose', field: "Chọn", sortable: 'none' },
         { name: 'id', field: "Mã", sortable: 'none' },
         { name: 'name', field: "Tên", sortable: 'none' },
         { name: 'quantity', field: "Nhập giá trị", sortable: 'none' },
@@ -99,7 +99,6 @@ function UpdateEmployee(props) {
     })
     const specifications = listEmployee[0]?.specifications;
     const [images, setImages] = useState(listEmployee[0]?.images);
-    let a = listEmployee[0]?.images;
 
     const { register, control, handleSubmit, reset, trigger, setError, formState: { errors } } = useForm({
         // defaultValues: {}; you can populate the fields by this attribute 
@@ -109,6 +108,8 @@ function UpdateEmployee(props) {
         control, // control props comes from useForm (optional: if you are using FormContext)
         name: "test", // unique name for your Field Array
     });
+
+
     const onSubmit = (data, e) => {
         // e.preventDefault();
         const { avatar, category, height, highlights, id, length, name, price, weight, width } = data;
@@ -123,100 +124,13 @@ function UpdateEmployee(props) {
 
         console.log(avatar, category, height, highlights, id, length, name, price, weight, width, b)
 
-        const newImages = contentPicture.concat(images);
-        console.log("content", newImages);
-        // for (let i = 0; i < listObjId.length; i++) {
-        //     for (let j = 0; j < b.length; j++) {
-        //         if (listObjId[i].specificationId === b[j].id) {
-        //             // if (listObjId[i].productId === b[j].key) {
-        //             listObjId[i].value = b[j].value;
-        //             // }
-        //         }
-        //     }
-        // }
-
-        // const description = highlights.split("; ");
-
-        // listObjId = listObjId.filter((item) => item.value !== 'none' && item.value !== undefined);
-
-        // addEmployee(dispatch,
-        //     id, name, category, price, highlights,
-        //     avatar, contentPicture, weight,
-        //     length, width, height, listObjId,
-        // );
-        // handleShow();
+        updateOneProduct(dispatch, avatar, category, height, highlights, id, length, name, price, weight, width, b, images)
+        handleShow();
     }
 
-    const [checked, setChecked] = useState([]);
-
-    const handleCheck = (id) => {
-
-        setChecked(prev => {
-            const isChecked = checked.includes(id);
-            if (isChecked) {
-
-                return checked.filter(item => item !== id)
-            }
-            else {
-                return [...prev, id,]
-            }
-        })
-    }
-    const inputFile = useRef(null);
 
 
-    const [selectedFile, setSelectedFile] = useState([]);
-    const [preview, setPreview] = useState([]);
-    const [contentPicture, setContentPicure] = useState([]);
 
-    useEffect(() => {
-        if (!selectedFile) {
-            setPreview(undefined)
-            return
-        }
-        let objectUrl = '';
-        selectedFile?.map((item) => {
-            objectUrl = URL.createObjectURL(item)
-        })
-        setImages((p) => [...p, objectUrl])
-
-        // free memory when ever this component is unmounted
-        return () => {
-            selectedFile.map(item => {
-                URL.revokeObjectURL(item)
-            })
-        }
-    }, [selectedFile])
-
-
-    const onSelectFile = e => {
-        if (!e.target.files || e.target.files.length === 0) {
-            setSelectedFile(undefined)
-            return
-        }
-
-        // I've kept this example simple by using the first image instead of multiples
-        setSelectedFile((p) => [...p, e.target.files[0]]);
-        getBase64(e.target.files[0]);
-    }
-
-    const onLoad = fileString => {
-        var strImage = fileString.replace(/^data:image\/[a-z]+;base64,/, "");
-        setContentPicure((p) => [...p, strImage]);
-    };
-
-    const getBase64 = file => {
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            onLoad(reader.result);
-        };
-    };
-
-
-    const deleteImage = (index) => {
-        setImages(images.filter(item => item !== images[index]));
-    }
 
 
     return (
@@ -505,12 +419,12 @@ function UpdateEmployee(props) {
                         <div>
                             <span>Ảnh mô tả</span>
                             <div>
-                                <input
+                                {/* <input
                                     ref={inputFile}
                                     id="file"
                                     type="file"
                                     onChange={(e) => onSelectFile(e)}
-                                />
+                                /> */}
                                 {images?.map((i, index) => (
                                     <span key={index}>
                                         <img
@@ -519,7 +433,7 @@ function UpdateEmployee(props) {
                                             style={{ width: '50px', height: '50px', margin: '0 10px' }}
                                             alt="img"
                                         />
-                                        <span onClick={() => deleteImage(index)}>&times;</span>
+                                        {/* <span onClick={() => deleteImage(index)}>&times;</span> */}
                                     </span>
                                 ))}
                             </div>
@@ -533,14 +447,11 @@ function UpdateEmployee(props) {
                         // onClick={handleActions}
 
                         >
-                            Xác nhận
+                            Cập nhật sản phẩm
                         </Button>
                     </form>
                 </div>
             </Row>
-
-
-
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -549,7 +460,7 @@ function UpdateEmployee(props) {
                 <Modal.Body>Sản phẩm cập nhật thành công!</Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={() => {
-                        history.push('/');
+                        history.push('/list');
                     }}>
                         Trở về
                     </Button>

@@ -38,7 +38,7 @@ export const addEmployee = async (dispatch,
             categoryId: category,
             name: name,
             price: price,
-            highlights: [description],
+            highlights: description,
             avatar: {
                 content: avatar,
                 isUrl: true,
@@ -74,34 +74,43 @@ export const deleteOneEmployee = async (dispatch, id,) => {
 }
 
 //PUT: update one product
-export const updateOneProduct = async (dispatch, id,
-    name,
-    category,
-    price,
-    quantity,
-    description,
-    avatar,
-    image1,
-    image2,
-    image3,
-    image4,) => {
+export const updateOneProduct = async (dispatch,
+     avatar, 
+     category, 
+     height, 
+     highlights, 
+     id, 
+     length, 
+     name, 
+     price, 
+     weight, 
+     width, 
+     b,
+     images,) => {
     try {
         const res = await callApi(`/admin/products/${id}`, 'PUT', {
             productId: id,
             categoryId: category,
             name: name,
             price: price,
-            highlights: description,
+            highlights: [highlights],
             avatar: {
                 content: avatar,
                 isUrl: true,
             },
-            images: [image1, image2, image3, image4].map(image => ({
+            images: images.map(image => ({
                 content: image,
                 isUrl: true,
-            }))
+            })),
+            width: width,
+            height: height,
+            length: length,
+            weight: weight,
+            enable: true,
+            specifications: b,
         })
-        getListEmployee(dispatch)
+        getListEmployee(dispatch);
+        console.log(highlights)
     }
     catch (err) {
         console.log(err)

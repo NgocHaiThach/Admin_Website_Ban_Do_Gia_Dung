@@ -192,7 +192,7 @@ function AddEmployee(props) {
         listObjId = listObjId.filter((item) => item.value !== 'none' && item.value !== undefined);
 
         addEmployee(dispatch,
-            id, name, category, price, highlights,
+            id, name, category, price, description,
             avatar, contentPicture, weight,
             length, width, height, listObjId,
         );
@@ -349,7 +349,7 @@ function AddEmployee(props) {
                         {errors?.category?.type === "required" && <p className="valid-form__message">* Vui chọn loại sản phẩm</p>}
 
                         <p className="form-group">
-                            <label>Khối lượng sản phẩm</label>
+                            <label>Khối lượng sản phẩm (g)</label>
                             <input
                                 name="weight"
                                 className="form-control max-width"
@@ -360,7 +360,7 @@ function AddEmployee(props) {
                         {errors?.weight?.type === "required" && <p className="valid-form__message">* Vui lòng nhập khối lượng sản phẩm</p>}
 
                         <p className="form-group">
-                            <label>Chiều dài sản phẩm</label>
+                            <label>Chiều dài sản phẩm (cm)</label>
                             <input
                                 name="length"
                                 className="form-control max-width"
@@ -371,7 +371,7 @@ function AddEmployee(props) {
                         {errors?.length?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều dài sản phẩm</p>}
 
                         <p className="form-group">
-                            <label>Chiều rộng sản phẩm</label>
+                            <label>Chiều rộng sản phẩm (cm)</label>
                             <input
                                 name="width"
                                 className="form-control max-width"
@@ -382,7 +382,7 @@ function AddEmployee(props) {
                         {errors?.width?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều rộng sản phẩm</p>}
 
                         <p className="form-group">
-                            <label>Chiều rộng sản phẩm</label>
+                            <label>Chiều cao sản phẩm (cm)</label>
                             <input
                                 name="height"
                                 className="form-control max-width"
@@ -393,7 +393,7 @@ function AddEmployee(props) {
                         {errors?.height?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều cao sản phẩm</p>}
 
                         <p className="form-group">
-                            <label>Chiều rộng sản phẩm</label>
+                            <label>Đặc điểm sản phẩm</label>
                             <input
                                 name="highlights"
                                 className="form-control max-width"

@@ -87,7 +87,8 @@ function TableEmployee({ listEmployee, titleData }) {
 
     const handelDelete = (id) => {
         deleteOneEmployee(dispatch, id);
-        history.push('/');
+        history.push('/list');
+        handleClose();
     }
 
     return (

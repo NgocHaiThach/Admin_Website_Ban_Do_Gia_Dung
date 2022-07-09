@@ -89,141 +89,149 @@ function PrssStatus(props) {
         }
         setListBill(filter);
         setInput(input)
+    };
+
+    const confirmBill = async (id) => {
+        const res = await callApi("/orders/approve", "POST", {
+            orderId: id,
+        });
+        if (res.status === 200) {
+            handleShow();
+            getBillListAll();
+        }
+        else {
+            alert('Có lỗi xảy ra, vui lòng kiểm tra lại')
+        }
     }
 
 
     return (
-        listBill.length > 0 ?
-            <div>
-                <div className="d-flex mb-5">
-                    <Pagination className="mr-4">
-                        <Pagination.First disabled={currentPage === 0} onClick={() => setCurrentPage(0)} />
-                        <Pagination.Prev disabled={currentPage === 0} onClick={() => setCurrentPage(currentPage - 1)} />
+        // listBill.length > 0 ?
+        <div>
+            <div className="d-flex mb-5">
+                <Pagination className="mr-4">
+                    <Pagination.First disabled={currentPage === 0} onClick={() => setCurrentPage(0)} />
+                    <Pagination.Prev disabled={currentPage === 0} onClick={() => setCurrentPage(currentPage - 1)} />
 
-                        <Pagination.Item active={currentPage === 0} onClick={() => {
-                            setCurrentPage(0);
-                        }}>
-                            {1}
+                    <Pagination.Item active={currentPage === 0} onClick={() => {
+                        setCurrentPage(0);
+                    }}>
+                        {1}
+                    </Pagination.Item>
+
+                    {currentPage > 1 ? (
+                        <>
+                            <Pagination.Ellipsis />
+                        </>
+                    ) : null}
+
+                    {currentPage < totalPage - 2 && currentPage > 0 ?
+                        <Pagination.Item active={currentPage} >
+                            {currentPage + 1}
                         </Pagination.Item>
+                        : null
+                    }
 
-                        {currentPage > 1 ? (
-                            <>
-                                <Pagination.Ellipsis />
-                            </>
-                        ) : null}
+                    {totalPage - 1 > currentPage + 1 ? <Pagination.Ellipsis /> : null}
 
-                        {currentPage < totalPage - 2 && currentPage > 0 ?
-                            <Pagination.Item active={currentPage} >
-                                {currentPage + 1}
-                            </Pagination.Item>
-                            : null
-                        }
-
-                        {totalPage - 1 > currentPage + 1 ? <Pagination.Ellipsis /> : null}
-
-                        {currentPage < totalPage && currentPage === totalPage - 2 && currentPage > 0 ?
-                            <Pagination.Item active={currentPage} >
-                                {currentPage + 1}
-                            </Pagination.Item>
-                            : null
-                        }
-                        {totalPage > 1 ? <Pagination.Item active={currentPage === totalPage - 1} onClick={() => {
-                            setCurrentPage(totalPage - 1);
-                        }}>  {totalPage}</Pagination.Item> : null}
+                    {currentPage < totalPage && currentPage === totalPage - 2 && currentPage > 0 ?
+                        <Pagination.Item active={currentPage} >
+                            {currentPage + 1}
+                        </Pagination.Item>
+                        : null
+                    }
+                    {totalPage > 1 ? <Pagination.Item active={currentPage === totalPage - 1} onClick={() => {
+                        setCurrentPage(totalPage - 1);
+                    }}>  {totalPage}</Pagination.Item> : null}
 
 
-                        <Pagination.Next disabled={currentPage === totalPage - 1} onClick={() => setCurrentPage(currentPage + 1)} />
-                        <Pagination.Last disabled={currentPage === totalPage - 1} onClick={() => setCurrentPage(totalPage - 1)} />
-                    </Pagination>
+                    <Pagination.Next disabled={currentPage === totalPage - 1} onClick={() => setCurrentPage(currentPage + 1)} />
+                    <Pagination.Last disabled={currentPage === totalPage - 1} onClick={() => setCurrentPage(totalPage - 1)} />
+                </Pagination>
 
-                    <Form.Select onChange={handleChange}
-                        style={{ height: '40px', width: '100px', marginLeft: '15px' }}
-                        className="ml-4" aria-label="Default select example">
-                        <option>Size</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </Form.Select>
+                <Form.Select onChange={handleChange}
+                    style={{ height: '40px', width: '100px', marginLeft: '15px' }}
+                    className="ml-4" aria-label="Default select example">
+                    <option>Size</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </Form.Select>
 
-                </div>
-
-                <form className='search-product mb-20'>
-                    <input className='search__input'
-                        placeholder='Tìm kiếm...'
-                        value={search}
-                        onChange={onSearch}
-                    />
-                </form>
-
-                {isLoading ?
-                    <div className="bill__loading">
-                        <div className="spinner-container">
-                            <div className="loading-spinner">
-                            </div>
-                        </div>
-                    </div> :
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                {titleData.map((title, index) => (
-                                    <th key={index}>
-                                        {title.field}
-                                        {/* {renderIconSort(title.sortable, index, title.name)} */}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        {listBill.map((item, index) => (
-                            <tbody key={index}>
-                                <tr key={index}>
-
-                                    <td>{item.orderId.slice(0, 8)}</td>
-                                    <td>
-                                        {item.products.map((p, i) => (
-                                            <li key={i}>
-                                                {p.name}
-                                            </li>
-                                        ))}
-                                    </td>
-                                    <td>{item.status}</td>
-                                    <td>{formatPrice(item.total)}đ</td>
-                                    <td>{item.orderDate}</td>
-                                    <td className="col-lg-3">
-                                        <Button variant="success">
-                                            Cập nhật
-                                        </Button>
-                                        <Modal show={show} onHide={handleClose}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title>Confirm</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>Are you sure you want to delete this employee?</Modal.Body>
-                                            <Modal.Footer>
-                                                <Button variant="secondary" onClick={handleClose}>
-                                                    Trở về
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                >
-                                                    Xóa loại sản phẩm
-                                                </Button>
-                                            </Modal.Footer>
-                                        </Modal>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        ))}
-                        <tfoot>
-                            <tr>
-                                {titleData.map((title, index) => (
-                                    <th key={index}>{title.field}</th>
-                                ))}
-                            </tr>
-                        </tfoot>
-                    </Table>
-                }
             </div>
-            : <h3>Đơn hàng trống</h3>
+
+            <form className='search-product mb-20'>
+                <input className='search__input'
+                    placeholder='Tìm kiếm...'
+                    value={search}
+                    onChange={onSearch}
+                />
+            </form>
+
+            {isLoading ?
+                <div className="bill__loading">
+                    <div className="spinner-container">
+                        <div className="loading-spinner">
+                        </div>
+                    </div>
+                </div> :
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            {titleData.map((title, index) => (
+                                <th key={index}>
+                                    {title.field}
+                                    {/* {renderIconSort(title.sortable, index, title.name)} */}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    {(listBill).map((item, index) => (
+                        <tbody key={index}>
+                            <tr key={index}>
+
+                                <td>{item.orderId.slice(0, 8)}</td>
+                                <td>
+                                    {item.products.map((p, i) => (
+                                        <li key={i}>
+                                            {p.name}
+                                        </li>
+                                    ))}
+                                </td>
+                                <td>{item.status}</td>
+                                <td>{formatPrice(item.total)}đ</td>
+                                <td>{item.orderDate}</td>
+                                <td className="col-lg-3">
+                                    <Button onClick={() => confirmBill(item.orderId)} variant="success">
+                                        Xác nhận
+                                    </Button>
+                                    <Modal show={show} onHide={handleClose}>
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>Thông báo</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>Xác nhận đơn hành thành công!</Modal.Body>
+                                        <Modal.Footer>
+                                            <Button variant="primary" onClick={handleClose}>
+                                                Trở về
+                                            </Button>
+                                        </Modal.Footer>
+                                    </Modal>
+                                </td>
+                            </tr>
+                        </tbody>
+                    ))}
+                    <tfoot>
+                        <tr>
+                            {titleData.map((title, index) => (
+                                <th key={index}>{title.field}</th>
+                            ))}
+                        </tr>
+                    </tfoot>
+                </Table>
+            }
+        </div>
+        // : <h3>Đơn hàng trống</h3>}
     );
 }
 
