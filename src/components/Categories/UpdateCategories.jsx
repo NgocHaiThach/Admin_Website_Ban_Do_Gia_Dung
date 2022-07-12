@@ -1,13 +1,19 @@
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
-import { Button, Container, Modal } from 'react-bootstrap';
+import { Button, Container, Modal, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as Yup from "yup";
 import { updateOneCategory } from '../../reudx/Categories/apiFuntionCategory';
 import InputField from '../InputField';
+import cookies from 'react-cookies';
+
 
 function UpdateCategories(props) {
+
+    const adminInfo = cookies.load('admin');
+
+
     const validate = Yup.object({
         categoryId: Yup.string()
             .max(40, "Tên phải ngắn hơn 10 ký tự")
@@ -49,87 +55,92 @@ function UpdateCategories(props) {
 
     return (
         <Container>
-            <Formik
-                initialValues={
-                    {
-                        categoryId: listEmployee[0]?.categoryId,
-                        classificationId: listEmployee[0]?.classificationId,
-                        name: listEmployee[0]?.name,
-                        slogan: listEmployee[0]?.slogan,
-                        image: listEmployee[0]?.image,
-                        advantages1: listEmployee[0]?.advantages[0]?.content,
-                        advantages2: listEmployee[0]?.advantages[1]?.content,
-                        advantages3: listEmployee[0]?.advantages[2]?.content,
-                        advantages4: listEmployee[0]?.advantages[3]?.content,
-                    }
-                }
-                validationSchema={validate}
-                onSubmit={(values) => {
-                    const { categoryId,
-                        classificationId,
-                        name,
-                        slogan,
-                        image,
-                        advantages1,
-                        advantages2,
-                        advantages3,
-                        advantages4,
-                    } = values;
-                    console.log(
-                        categoryId,
-                        classificationId,
-                        name,
-                        slogan,
-                        image,
-                        advantages1,
-                        advantages2,
-                        advantages3,
-                        advantages4,
-                    )
-                    updateOneCategory(dispatch,
-                        categoryId,
-                        classificationId,
-                        name,
-                        slogan,
-                        image,
-                        advantages1,
-                        advantages2,
-                        advantages3,
-                        advantages4)
-                    handleShow()
+            {adminInfo ?
+                <Row>
+                    <h3 className='mb-4 mt-4'>Cập nhật loại sản phẩm</h3>
+                    <Formik
+                        initialValues={
+                            {
+                                categoryId: listEmployee[0]?.categoryId,
+                                classificationId: listEmployee[0]?.classificationId,
+                                name: listEmployee[0]?.name,
+                                slogan: listEmployee[0]?.slogan,
+                                image: listEmployee[0]?.image,
+                                advantages1: listEmployee[0]?.advantages[0]?.content,
+                                advantages2: listEmployee[0]?.advantages[1]?.content,
+                                advantages3: listEmployee[0]?.advantages[2]?.content,
+                                advantages4: listEmployee[0]?.advantages[3]?.content,
+                            }
+                        }
+                        validationSchema={validate}
+                        onSubmit={(values) => {
+                            const { categoryId,
+                                classificationId,
+                                name,
+                                slogan,
+                                image,
+                                advantages1,
+                                advantages2,
+                                advantages3,
+                                advantages4,
+                            } = values;
+                            console.log(
+                                categoryId,
+                                classificationId,
+                                name,
+                                slogan,
+                                image,
+                                advantages1,
+                                advantages2,
+                                advantages3,
+                                advantages4,
+                            )
+                            updateOneCategory(dispatch,
+                                categoryId,
+                                classificationId,
+                                name,
+                                slogan,
+                                image,
+                                advantages1,
+                                advantages2,
+                                advantages3,
+                                advantages4)
+                            handleShow()
 
-                }}
-            >
-                {(formik) => (
-                    <Form>
-                        <InputField label="Mã Loại" name="categoryId" type="text" />
-                        <InputField label="Mã Danh Mục" name="classificationId" type="text" />
-                        <InputField label="Tên" name="name" type="text" />
-                        <InputField label="Slogan" name="slogan" type="text" />
-                        <InputField label="Ảnh" name="image" type="text" />
-                        <InputField label="Mô tả" name="advantages1" type="text" />
-                        <InputField label="Mô tả" name="advantages2" type="text" />
-                        <InputField label="Mô tả" name="advantages3" type="text" />
-                        <InputField label="Mô tả" name="advantages4" type="text" />
+                        }}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <InputField label="Mã Loại" name="categoryId" type="text" />
+                                <InputField label="Mã Danh Mục" name="classificationId" type="text" />
+                                <InputField label="Tên" name="name" type="text" />
+                                <InputField label="Slogan" name="slogan" type="text" />
+                                <InputField label="Ảnh" name="image" type="text" />
+                                <InputField label="Mô tả" name="advantages1" type="text" />
+                                <InputField label="Mô tả" name="advantages2" type="text" />
+                                <InputField label="Mô tả" name="advantages3" type="text" />
+                                <InputField label="Mô tả" name="advantages4" type="text" />
 
-                        <Button
-                            variant="secondary"
-                            className="mr-5"
-                            type='reset'
-                        >
-                            Reset
-                        </Button>
-                        <Button
-                            variant="primary"
-                            className="ml-5"
-                            type="submit"
-                        >
-                            Cập Nhật Loại Sản Phẩm
+                                <Button
+                                    variant="secondary"
+                                    className="mr-5"
+                                    type='reset'
+                                >
+                                    Reset
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    className="ml-5"
+                                    type="submit"
+                                >
+                                    Cập Nhật Loại Sản Phẩm
 
-                        </Button>
-                    </Form>
-                )}
-            </Formik>
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+                </Row>
+                : <div>Vui lòng đăng nhập</div>}
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

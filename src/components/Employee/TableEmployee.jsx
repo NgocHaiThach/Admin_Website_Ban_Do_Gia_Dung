@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Button, Modal, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { deleteOneEmployee, getListEmployee, getSortEmployee, setListEmployee } from '../../reudx/apiFuntion';
+import { deleteOneEmployee, getListEmployee, getSortEmployee, setListEmployee, updateOneProduct } from '../../reudx/apiFuntion';
 import { useHistory } from 'react-router-dom';
 import { formatDate, formatPrice } from '../../utils/format';
+import callApi from '../../utils/callApi';
 
 function TableEmployee({ listEmployee, titleData }) {
 
@@ -13,6 +14,11 @@ function TableEmployee({ listEmployee, titleData }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const [show1, setShow1] = useState(false);
+    const handleClose1 = () => setShow1(false);
+    const handleShow1 = () => setShow1(true);
+
     const [idProduct, setIdProduct] = useState('');
 
     const [titleTable, setTitleTable] = useState([...titleData]);
@@ -89,6 +95,14 @@ function TableEmployee({ listEmployee, titleData }) {
         deleteOneEmployee(dispatch, id);
         history.push('/list');
         handleClose();
+    };
+
+    const [product, setProduct] = useState(null)
+    const handelEnable = () => {
+        console.log(product)
+        const enable = false;
+        updateOneProduct(dispatch, product.avatar, product.categoryId, product.height, product.highlights, product.productId, product.length, product.name, product.price, product.weight, product.width, product.specifications, product.images, enable)
+        handleClose1();
     }
 
     return (
@@ -128,10 +142,19 @@ function TableEmployee({ listEmployee, titleData }) {
                                         handleShow()
                                     }}
                                     variant="danger" className="ml-5"
-                                //onClick={() => handelDelete(employee.productId)}
                                 >
                                     Xóa
                                 </Button>
+                                {employee.enable ? <Button
+                                    onClick={() => {
+                                        setProduct(employee)
+                                        handleShow1()
+                                    }}
+                                    variant="warning" className="ml-5"
+                                >
+                                    Khóa
+                                </Button> :
+                                    null}
                                 <Modal show={show} onHide={handleClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Thông báo</Modal.Title>
@@ -146,6 +169,23 @@ function TableEmployee({ listEmployee, titleData }) {
                                             onClick={() => handelDelete(idProduct)}
                                         >
                                             Xóa sản phẩm
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal>
+                                <Modal show={show1} onHide={handleClose1}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Thông báo</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>Bạn có chắc chắn muốn khóa sản phẩm này?</Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="secondary" onClick={handleClose1}>
+                                            Trở về
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => handelEnable(product)}
+                                        >
+                                            Khóa sản phẩm
                                         </Button>
                                     </Modal.Footer>
                                 </Modal>

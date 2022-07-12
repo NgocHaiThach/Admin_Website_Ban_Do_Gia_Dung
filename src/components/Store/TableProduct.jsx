@@ -82,7 +82,7 @@ function TableProduct({ listEmployee, titleData, onActions, quantity }) {
                     style={{ marginLeft: '15px' }}
                 // onClick={handleActions}
                 >
-                    Submit
+                    Thực hiện
                 </Button>
                 <Table striped bordered hover>
                     <thead>

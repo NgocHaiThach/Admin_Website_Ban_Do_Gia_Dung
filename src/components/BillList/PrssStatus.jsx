@@ -30,8 +30,8 @@ function PrssStatus(props) {
 
     const getBillListAll = async () => {
         setIsLoading(true);
-        const res = await callApi("/orders/get", "POST", {
-            customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
+        const res = await callApi("/orders/admin/get", "POST", {
+            // customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
             status: 'PRSS',
             page: currentPage,
             size: sizePage,

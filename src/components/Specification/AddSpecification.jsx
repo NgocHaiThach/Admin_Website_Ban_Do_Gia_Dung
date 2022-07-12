@@ -5,8 +5,12 @@ import { Button, Container, Modal, Row } from 'react-bootstrap';
 import { Form, Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { addSpecification } from '../../reudx/Specification/apiSpecification';
+import cookies from 'react-cookies';
 
 function AddSpecification(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const validate = Yup.object({
         specificationId: Yup.string()
             .required("Trường này bắt buộc"),
@@ -22,45 +26,47 @@ function AddSpecification(props) {
 
     return (
         <Container>
-            <Row>
-                <Formik
-                    initialValues={
-                        {
-                            specificationId: "",
-                            name: "",
+            {adminInfo ?
+                <Row>
+                    <Formik
+                        initialValues={
+                            {
+                                specificationId: "",
+                                name: "",
+                            }
                         }
-                    }
-                    validationSchema={validate}
-                    onSubmit={(values) => {
-                        const { specificationId, name } = values;
-                        console.log(specificationId, name)
-                        addSpecification(dispatch, specificationId, name)
-                        handleShow()
-                    }}
-                >
-                    {(formik) => (
-                        <Form>
-                            <InputField label="Mã" name="specificationId" type="text" />
-                            <InputField label="Tên" name="name" type="text" />
-                            <Button
-                                variant="secondary"
-                                className="mr-5"
-                                type='reset'
-                            >
-                                Reset
-                            </Button>
-                            <Button
-                                variant="primary"
-                                className="ml-5"
-                                type="submit"
-                            >
-                                Thêm Thông Số Sản Phẩm
+                        validationSchema={validate}
+                        onSubmit={(values) => {
+                            const { specificationId, name } = values;
+                            console.log(specificationId, name)
+                            addSpecification(dispatch, specificationId, name)
+                            handleShow()
+                        }}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <InputField label="Mã" name="specificationId" type="text" />
+                                <InputField label="Tên" name="name" type="text" />
+                                <Button
+                                    variant="secondary"
+                                    className="mr-5"
+                                    type='reset'
+                                >
+                                    Reset
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    className="ml-5"
+                                    type="submit"
+                                >
+                                    Thêm Thông Số Sản Phẩm
 
-                            </Button>
-                        </Form>
-                    )}
-                </Formik>
-            </Row>
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+                </Row>
+                : <div>Vui lòng đăng nhập</div>}
 
 
             <Modal show={show} onHide={handleClose}>

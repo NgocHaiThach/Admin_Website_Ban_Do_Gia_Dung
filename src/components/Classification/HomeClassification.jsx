@@ -6,8 +6,12 @@ import { getListClassificationSuccess } from '../../reudx/Classification/listCla
 import callApi from '../../utils/callApi';
 import { FormatInput } from '../../utils/format';
 import TableClassification from './TableClassification';
+import cookies from 'react-cookies';
+
 
 function HomeClassification(props) {
+
+    const adminInfo = cookies.load('admin');
 
     const titleData = [
         // { name: 'id', field: "Id", sortable: 'none' },
@@ -29,8 +33,10 @@ function HomeClassification(props) {
     }
 
     useEffect(() => {
-        getToSearch();
-        getListClassification(dispatch);
+        if (adminInfo) {
+            getToSearch();
+            getListClassification(dispatch);
+        }
     }, []);
 
 
@@ -72,31 +78,32 @@ function HomeClassification(props) {
 
     return (
         <Container>
-            <Row>
-                <div className="panel panel-primary">
-                    <div className="panel-heading">
-                        <h3 className="panel-title mb-40 mt-4">Danh Sách Danh Mục</h3>
-                    </div>
+            {adminInfo ?
+                <Row>
+                    <div className="panel panel-primary">
+                        <div className="panel-heading">
+                            <h3 className="panel-title mb-40 mt-4">Danh Sách Danh Mục</h3>
+                        </div>
 
-                    <form className='search-product mb-20' >
-                        <input className='search__input'
-                            placeholder='Loại sản phẩm bạn muốn tìm...'
-                            value={search}
-                            onChange={onSearch}
-                            style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                        <form className='search-product mb-20' >
+                            <input className='search__input'
+                                placeholder='Loại sản phẩm bạn muốn tìm...'
+                                value={search}
+                                onChange={onSearch}
+                                style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                            />
+                        </form>
+
+                        <div className="total-money mb-3">
+                            Tổng danh mục: {listClassification.length}
+                        </div>
+
+                        <TableClassification
+                            listClassification={listClassification}
+                            titleData={titleData}
                         />
-                    </form>
-
-                    <div className="total-money mb-3">
-                        Tổng danh mục: {listClassification.length}
                     </div>
-
-                    <TableClassification
-                        listClassification={listClassification}
-                        titleData={titleData}
-                    />
-                </div>
-            </Row>
+                </Row> : <div>Vui lòng đăng nhập</div>}
         </Container>
     );
 }

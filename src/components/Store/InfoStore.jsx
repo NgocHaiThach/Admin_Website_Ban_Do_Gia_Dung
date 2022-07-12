@@ -4,8 +4,12 @@ import { useParams } from 'react-router-dom';
 import callApi from '../../utils/callApi';
 import { FormatInput } from '../../utils/format';
 import TableInfoStore from './TableInfoStore';
+import cookies from 'react-cookies';
 
 function InfoStore(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const titleData = [
         { name: 'id', field: "Mã", sortable: 'none' },
         { name: 'name', field: "Tên Sản Phẩm", sortable: 'none' },
@@ -67,8 +71,10 @@ function InfoStore(props) {
     }
 
     useEffect(() => {
-        getInfoStoreById();
-        getToSearch();
+        if (adminInfo) {
+            getInfoStoreById();
+            getToSearch();
+        }
     }, []);
 
     return (

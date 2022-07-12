@@ -1,13 +1,18 @@
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
-import { Button, Container, Modal } from 'react-bootstrap';
+import { Button, Container, Modal, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import * as Yup from "yup";
 import { updateOneClassification } from '../../reudx/Classification/apiFuntionClassification';
 import InputField from '../InputField';
+import cookies from 'react-cookies';
+
 
 function UpdateClassification(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const validate = Yup.object({
         classificationId: Yup.string()
             .max(10, "Tên phải ngắn hơn 10 ký tự")
@@ -41,49 +46,52 @@ function UpdateClassification(props) {
 
     return (
         <Container>
-            <Formik
-                initialValues={
-                    {
-                        classificationId: listClassification[0].classificationId || '',
-                        name: listClassification[0].name || '',
-                        imageMenu: listClassification[0].imageMenu || '',
-                        imageBanner: listClassification[0].imageBanner || '',
+            <Row>
+                <h3 className='mb-4 mt-4'>Cập nhật danh mục sản phẩm</h3>
+                <Formik
+                    initialValues={
+                        {
+                            classificationId: listClassification[0].classificationId || '',
+                            name: listClassification[0].name || '',
+                            imageMenu: listClassification[0].imageMenu || '',
+                            imageBanner: listClassification[0].imageBanner || '',
+                        }
                     }
-                }
-                validationSchema={validate}
-                onSubmit={(values) => {
-                    const { classificationId, name, imageMenu, imageBanner } = values;
-                    console.log(classificationId, name, imageMenu, imageBanner)
-                    updateOneClassification(dispatch, classificationId, name, imageMenu, imageBanner)
-                    handleShow()
+                    validationSchema={validate}
+                    onSubmit={(values) => {
+                        const { classificationId, name, imageMenu, imageBanner } = values;
+                        console.log(classificationId, name, imageMenu, imageBanner)
+                        updateOneClassification(dispatch, classificationId, name, imageMenu, imageBanner)
+                        handleShow()
 
-                }}
-            >
-                {(formik) => (
-                    <Form>
-                        <InputField label="Mã" name="classificationId" type="text" />
-                        <InputField label="Tên" name="name" type="text" />
-                        <InputField label="Ảnh Menu" name="imageMenu" type="text" />
-                        <InputField label="Ảnh Banner" name="imageBanner" type="text" />
+                    }}
+                >
+                    {(formik) => (
+                        <Form>
+                            <InputField label="Mã" name="classificationId" type="text" />
+                            <InputField label="Tên" name="name" type="text" />
+                            <InputField label="Ảnh Menu" name="imageMenu" type="text" />
+                            <InputField label="Ảnh Banner" name="imageBanner" type="text" />
 
-                        <Button
-                            variant="secondary"
-                            className="mr-5"
-                            type='reset'
-                        >
-                            Reset
-                        </Button>
-                        <Button
-                            variant="primary"
-                            className="ml-5"
-                            type="submit"
-                        >
-                            Cập Nhật Danh Mục
+                            <Button
+                                variant="secondary"
+                                className="mr-5"
+                                type='reset'
+                            >
+                                Reset
+                            </Button>
+                            <Button
+                                variant="primary"
+                                className="ml-5"
+                                type="submit"
+                            >
+                                Cập Nhật Danh Mục
 
-                        </Button>
-                    </Form>
-                )}
-            </Formik>
+                            </Button>
+                        </Form>
+                    )}
+                </Formik>
+            </Row>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

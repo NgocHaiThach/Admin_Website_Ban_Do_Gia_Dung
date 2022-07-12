@@ -14,7 +14,6 @@ function DoneStatus(props) {
         { name: 'status', field: "Trạng thái", sortable: 'none' },
         { name: 'total', field: "Tổng giá", sortable: 'none' },
         { name: 'orderDate', field: "Ngày", sortable: 'none' },
-        { name: 'activity', field: "Hoạt động", sortable: 'none' },
     ]
 
     const [isLoading, setIsLoading] = useState(false);
@@ -30,8 +29,8 @@ function DoneStatus(props) {
 
     const getBillListAll = async () => {
         setIsLoading(true);
-        const res = await callApi("/orders/get", "POST", {
-            customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
+        const res = await callApi("/orders/admin/get", "POST", {
+            // customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
             status: 'DONE',
             page: currentPage,
             size: sizePage,
@@ -185,27 +184,6 @@ function DoneStatus(props) {
                                 <td>{item.status}</td>
                                 <td>{formatPrice(item.total)}đ</td>
                                 <td>{item.orderDate}</td>
-                                <td className="col-lg-3">
-                                    <Button variant="success">
-                                        Cập nhật
-                                    </Button>
-                                    <Modal show={show} onHide={handleClose}>
-                                        <Modal.Header closeButton>
-                                            <Modal.Title>Confirm</Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body>Are you sure you want to delete this employee?</Modal.Body>
-                                        <Modal.Footer>
-                                            <Button variant="secondary" onClick={handleClose}>
-                                                Trở về
-                                            </Button>
-                                            <Button
-                                                variant="danger"
-                                            >
-                                                Xóa loại sản phẩm
-                                            </Button>
-                                        </Modal.Footer>
-                                    </Modal>
-                                </td>
                             </tr>
                         </tbody>
                     ))}

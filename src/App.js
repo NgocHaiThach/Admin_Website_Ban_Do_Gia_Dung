@@ -46,7 +46,7 @@ function App() {
     <div style={{width: '100%'}}>
       <Menu />
       <>
-          <Redirect exact from="/" to="/list" />
+          {/* <Redirect exact from="/" to="/list" /> */}
           <Route exact path="/list" component={HomePage} />
           <Route exact path="/classification" component={HomeClassification} />
           <Route exact path="/categorise" component={HomeCategories} />
@@ -77,12 +77,11 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-
         <Switch>
-          <Route exact path="/(login)" component={LoginContainer} />
+          <Redirect exact from="/" to="/login" />
+          <Route exact path="/login" component={LoginContainer} />
           <Route component={DefaultContainer} />
         </Switch>
-
       </BrowserRouter>
     </div>
   );

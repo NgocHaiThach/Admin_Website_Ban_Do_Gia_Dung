@@ -1,4 +1,3 @@
-import { FastField, Form, Formik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Container, Modal, Row, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,41 +5,36 @@ import * as Yup from "yup";
 import { addEmployee } from '../../reudx/apiFuntion';
 import { getListCategory } from '../../reudx/Categories/apiFuntionCategory';
 import { getListSpecification } from '../../reudx/Specification/apiSpecification';
-import InputField from '../InputField';
-import SelectField from '../SelectField';
-import SubTable from './SubTable';
 
-import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import Select from 'react-select';
-
-
-
-
-
+import cookies from 'react-cookies';
+import { useFieldArray, useForm } from "react-hook-form";
 
 
 function AddEmployee(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const validate = Yup.object({
         id: Yup.string()
             .max(10, "Tên phải ngắn hơn 10 ký tự")
             .required("Trường này bắt buộc"),
         name: Yup.string()
-            .max(50, "Tên phải ngắn hơn 50 ký tự")
+            .max(100, "Tên phải ngắn hơn 100 ký tự")
             .required("Trường này bắt buộc"),
         category: Yup.string()
             .required("Trường này bắt buộc"),
-        price: Yup.string()
+        price: Yup.number()
             .required("Trường này bắt buộc"),
         avatar: Yup.string()
             .required("Trường này bắt buộc"),
-        weight: Yup.string()
+        weight: Yup.number("Cân nặng phải là số")
             .required("Trường này bắt buộc"),
-        length: Yup.string()
+        length: Yup.number("Chiều dài phải là số")
             .required("Trường này bắt buộc"),
-        width: Yup.string()
+        width: Yup.number("Chiều rộng phải là số")
             .required("Trường này bắt buộc"),
-        height: Yup.string()
+        height: Yup.number("Chiều cao phải là số")
             .required("Trường này bắt buộc"),
         highlights: Yup.string()
             .required("Trường này bắt buộc"),
@@ -61,8 +55,10 @@ function AddEmployee(props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getListCategory(dispatch);
-        getListSpecification(dispatch);
+        if (adminInfo) {
+            getListCategory(dispatch);
+            getListSpecification(dispatch);
+        }
     }, []);
 
     const listCategory = useSelector(state => state.category.list);
@@ -201,297 +197,215 @@ function AddEmployee(props) {
 
     return (
         <Container className='mb-5 mt-5'>
-            <h3 className='mb-4'>Thêm sản phẩm</h3>
-            <Row>
-                {/* <Formik
-                    initialValues={
-                        {
-                            id: "", name: "", category: "",
-                            price: "", quantity: "", description: "",
-                            avatar: "", weight: "", length: "", width: "", height: "",
-                        }
-                    }
-                    validationSchema={validate}
-                    onSubmit={(values) => {
-                        const {
-                            id, name, category, price, description,
-                            avatar, weight, length, width, height,
-                        } = values;
+            {adminInfo ?
+                <>
+                    <h3 className='mb-4'>Thêm sản phẩm</h3>
+                    <Row>
+                        <div className="panel-body mt-4">
+                            <form onSubmit={handleSubmit(onSubmit)}>
 
-                        addEmployee(dispatch,
-                            id, name, category, price, description,
-                            avatar, contentPicture, weight,
-                            length, width, height)
-                        handleShow()
-                    }}
-                >
-                    {(formik) => (
-                        <Form>
-                            <InputField label="Mã" name="id" type="text" />
-                            <InputField label="Tên" name="name" type="text" />
-                            <FastField
-                                name="category"
-                                component={SelectField}
-
-                                label="Loại"
-                                placeholder="Mã loại sản phẩm"
-                                options={CATEGORY_OPTIONS}
-                            />
-
-                            <InputField label="Giá" name="price" type="text" />
-                            <InputField label="Mô tả" name="description" type="text" />
-                            <InputField label="Avatar" name="avatar" type="text" />
-                            <InputField label="Khối lượng" name="weight" type="text" />
-                            <InputField label="Độ dài" name="length" type="text" />
-                            <InputField label="Chiều dài" name="width" type="text" />
-                            <InputField label="Chiều cao" name="height" type="text" />
-
-                            <div>
-                                <span>Ảnh mô tả</span>
-                                <div>
+                                <p className="form-group">
+                                    <label>Mã Sản Phẩm</label>
                                     <input
-                                        ref={inputFile}
-                                        id="file"
-                                        type="file"
-                                        onChange={(e) => onSelectFile(e)}
+                                        name="id"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("id")}
                                     />
-                                    {(preview?.slice(1))?.map((i, index) => (
-                                        <img
-                                            key={index}
-                                            src={i}
-                                            style={{ width: '50px', height: '50px', margin: '0 10px' }}
-                                            alt="img"
+                                </p>
+                                {errors?.id?.type === "required" && <p className="valid-form__message">* Vui lòng nhập mã sản phẩm</p>}
+                                {errors?.id?.type === "max" && <p className="valid-form__message">* Tên phải ngắn hơn 10 ký tự</p>}
+
+                                <p className="form-group">
+                                    <label>Tên Sản Phẩm</label>
+                                    <input
+                                        name="name"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("name")}
+                                    />
+                                </p>
+                                {errors?.name?.type === "required" && <p className="valid-form__message">* Vui lòng nhập tên sản phẩm</p>}
+                                {errors?.name?.type === "max" && <p className="valid-form__message">* Tên phải ngắn hơn 100 ký tự</p>}
+
+                                <p className="form-group">
+                                    <label>Giá sản phẩm</label>
+                                    <input
+                                        name="price"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("price")}
+                                    />
+                                </p>
+                                {errors?.price?.type === "required" && <p className="valid-form__message">* Vui lòng nhập giá sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Avatar sản phẩm</label>
+                                    <input
+                                        name="avatar"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("avatar")}
+                                    />
+                                </p>
+                                {errors?.avatar?.type === "required" && <p className="valid-form__message">* Vui lòng nhập link avatar sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Loại Sản Phẩm</label>
+                                    <br />
+                                    <select className="form-control max-width"  {...register("category")}>
+                                        {CATEGORY_OPTIONS.map((item, index) => (
+                                            <option key={index} value={item.value}>{item.label}</option>
+                                        ))}
+                                    </select>
+                                </p>
+                                {errors?.category?.type === "required" && <p className="valid-form__message">* Vui chọn loại sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Khối lượng sản phẩm (g)</label>
+                                    <input
+                                        name="weight"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("weight")}
+                                    />
+                                </p>
+                                {errors?.weight?.type === "required" && <p className="valid-form__message">* Vui lòng nhập khối lượng sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Chiều dài sản phẩm (cm)</label>
+                                    <input
+                                        name="length"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("length")}
+                                    />
+                                </p>
+                                {errors?.length?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều dài sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Chiều rộng sản phẩm (cm)</label>
+                                    <input
+                                        name="width"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("width")}
+                                    />
+                                </p>
+                                {errors?.width?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều rộng sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Chiều cao sản phẩm (cm)</label>
+                                    <input
+                                        name="height"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("height")}
+                                    />
+                                </p>
+                                {errors?.height?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều cao sản phẩm</p>}
+
+                                <p className="form-group">
+                                    <label>Đặc điểm sản phẩm</label>
+                                    <input
+                                        name="highlights"
+                                        className="form-control max-width"
+                                        type="text"
+                                        {...register("highlights")}
+                                    />
+                                </p>
+                                {errors?.highlights?.type === "required" && <p className="valid-form__message">* Vui lòng nhập đặc điểm sản phẩm</p>}
+
+
+
+                                <label>Thông số sản phẩm</label>
+                                <Table className="mt-2" striped bordered hover style={{ width: '800px' }}>
+                                    <thead>
+                                        <tr>
+                                            {titleData.map((title, index) => (
+                                                <th key={index}>
+                                                    {title.field}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    {listSpecification.map((spec, index) => (
+                                        <tbody key={index}>
+                                            <tr key={index}>
+                                                <td>
+                                                    <div className="form-check">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            checked={checked.includes(spec.specificationId)}
+                                                            onChange={() => handleCheck(spec.specificationId)}
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td>{spec.specificationId}</td>
+                                                <td>{spec.name}</td>
+                                                <td>
+                                                    <input {...register(`test.${spec.specificationId}.value`)} />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    ))}
+                                    <tfoot>
+                                        <tr>
+                                            {titleData.map((title, index) => (
+                                                <th key={index}>{title.field}</th>
+                                            ))}
+                                        </tr>
+                                    </tfoot>
+                                </Table>
+
+                                <div>
+                                    <span>Ảnh mô tả</span>
+                                    <div>
+                                        <input
+                                            ref={inputFile}
+                                            id="file"
+                                            type="file"
+                                            onChange={(e) => onSelectFile(e)}
                                         />
-                                    ))}
+                                        {(preview?.slice(1))?.map((i, index) => (
+                                            <img
+                                                key={index}
+                                                src={i}
+                                                style={{ width: '50px', height: '50px', margin: '0 10px' }}
+                                                alt="img"
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <Button
-                                variant="secondary"
-                                className="mr-5 mt-4"
-                                type='reset'
-                            >
-                                Reset
-                            </Button>
-                            <Button
-                                variant="primary"
-                                className="ml-5 mt-4"
-                                type="submit"
-                            >
-                                Thêm Sản Phẩm
+                                <Button
+                                    variant="primary"
+                                    type="submit"
+                                    className="col-md-2 mt-3 mb-3"
+                                    style={{ marginLeft: '15px' }}
+                                // onClick={handleActions}
 
-                            </Button>
-                        </Form>
-                    )}
-                </Formik> */}
-                {/* <SubTable titleData={titleData} listSpecification={listSpecification} /> */}
-            </Row>
-
-            <Row>
-                <div className="panel-body mt-4">
-                    <form onSubmit={handleSubmit(onSubmit)}>
-
-                        <p className="form-group">
-                            <label>Mã Sản Phẩm</label>
-                            <input
-                                name="id"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("id")}
-                            />
-                        </p>
-                        {errors?.id?.type === "required" && <p className="valid-form__message">* Vui lòng nhập mã sản phẩm</p>}
-                        {errors?.id?.type === "max" && <p className="valid-form__message">* Tên phải ngắn hơn 10 ký tự</p>}
-
-                        <p className="form-group">
-                            <label>Tên Sản Phẩm</label>
-                            <input
-                                name="name"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("name")}
-                            />
-                        </p>
-                        {errors?.name?.type === "required" && <p className="valid-form__message">* Vui lòng nhập tên sản phẩm</p>}
-                        {errors?.name?.type === "max" && <p className="valid-form__message">* Tên phải ngắn hơn 50 ký tự</p>}
-
-                        <p className="form-group">
-                            <label>Giá sản phẩm</label>
-                            <input
-                                name="price"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("price")}
-                            />
-                        </p>
-                        {errors?.price?.type === "required" && <p className="valid-form__message">* Vui lòng nhập giá sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Avatar sản phẩm</label>
-                            <input
-                                name="avatar"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("avatar")}
-                            />
-                        </p>
-                        {errors?.avatar?.type === "required" && <p className="valid-form__message">* Vui lòng nhập link avatar sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Loại Sản Phẩm</label>
-                            <br />
-                            <select className="form-control max-width"  {...register("category")}>
-                                {CATEGORY_OPTIONS.map((item, index) => (
-                                    <option key={index} value={item.value}>{item.label}</option>
-                                ))}
-                            </select>
-                        </p>
-                        {errors?.category?.type === "required" && <p className="valid-form__message">* Vui chọn loại sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Khối lượng sản phẩm (g)</label>
-                            <input
-                                name="weight"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("weight")}
-                            />
-                        </p>
-                        {errors?.weight?.type === "required" && <p className="valid-form__message">* Vui lòng nhập khối lượng sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Chiều dài sản phẩm (cm)</label>
-                            <input
-                                name="length"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("length")}
-                            />
-                        </p>
-                        {errors?.length?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều dài sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Chiều rộng sản phẩm (cm)</label>
-                            <input
-                                name="width"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("width")}
-                            />
-                        </p>
-                        {errors?.width?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều rộng sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Chiều cao sản phẩm (cm)</label>
-                            <input
-                                name="height"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("height")}
-                            />
-                        </p>
-                        {errors?.height?.type === "required" && <p className="valid-form__message">* Vui lòng nhập chiều cao sản phẩm</p>}
-
-                        <p className="form-group">
-                            <label>Đặc điểm sản phẩm</label>
-                            <input
-                                name="highlights"
-                                className="form-control max-width"
-                                type="text"
-                                {...register("highlights")}
-                            />
-                        </p>
-                        {errors?.highlights?.type === "required" && <p className="valid-form__message">* Vui lòng nhập đặc điểm sản phẩm</p>}
-
-
-
-                        <label>Thông số sản phẩm</label>
-                        <Table className="mt-2" striped bordered hover style={{ width: '800px' }}>
-                            <thead>
-                                <tr>
-                                    {titleData.map((title, index) => (
-                                        <th key={index}>
-                                            {title.field}
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            {listSpecification.map((spec, index) => (
-                                <tbody key={index}>
-                                    <tr key={index}>
-                                        <td>
-                                            <div className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="checkbox"
-                                                    checked={checked.includes(spec.specificationId)}
-                                                    onChange={() => handleCheck(spec.specificationId)}
-                                                />
-                                            </div>
-                                        </td>
-                                        <td>{spec.specificationId}</td>
-                                        <td>{spec.name}</td>
-                                        <td>
-                                            <input {...register(`test.${spec.specificationId}.value`)} />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            ))}
-                            <tfoot>
-                                <tr>
-                                    {titleData.map((title, index) => (
-                                        <th key={index}>{title.field}</th>
-                                    ))}
-                                </tr>
-                            </tfoot>
-                        </Table>
-
-                        <div>
-                            <span>Ảnh mô tả</span>
-                            <div>
-                                <input
-                                    ref={inputFile}
-                                    id="file"
-                                    type="file"
-                                    onChange={(e) => onSelectFile(e)}
-                                />
-                                {(preview?.slice(1))?.map((i, index) => (
-                                    <img
-                                        key={index}
-                                        src={i}
-                                        style={{ width: '50px', height: '50px', margin: '0 10px' }}
-                                        alt="img"
-                                    />
-                                ))}
-                            </div>
+                                >
+                                    Xác nhận
+                                </Button>
+                            </form>
                         </div>
-
-                        <Button
-                            variant="primary"
-                            type="submit"
-                            className="col-md-2 mt-3 mb-3"
-                            style={{ marginLeft: '15px' }}
-                        // onClick={handleActions}
-
-                        >
-                            Xác nhận
-                        </Button>
-                    </form>
-                </div>
-            </Row>
+                    </Row>
 
 
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Thông báo</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Thêm sản phẩm thành công!</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Trở về
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                    <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Thông báo</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Thêm sản phẩm thành công!</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="primary" onClick={handleClose}>
+                                Trở về
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </> : <div>Vui lòng đăng nhập</div>}
         </Container>
 
     );

@@ -29,33 +29,53 @@ function Login(props) {
 
     const history = useHistory();
 
-    const handleLogin = async (data) => {
-        try {
-            await callApi('api/admins/login', 'POST', {
-                username: data.username,
-                password: data.password,
+    const handleLogin = (data) => {
+        console.log(data);
+        if (data.username === "trungdung" && data.password === "123456") {
+            // console.log("asfsd")
+            cookies.save('admin', {
+                customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
+                dateOfBirth: "2000-05-16T00:00:00",
+                email: null,
+                fullName: "Vũ Trung Dũng",
+                gender: null,
+                phone: "0334071056",
+                picture: "https://scontent.fsgn2-6.fna.fbcdn.net/v/t1.6435-1/67849344_2370694766539243_6955601279905169408_n.jpg?stp=dst-jpg_s200x200&_nc_cat=110&ccb=1-7&_nc_sid=7206a8&_nc_ohc=aokIbgOcAysAX-gabb3&_nc_ht=scontent.fsgn2-6.fna&oh=00_AT_mpG6341k1kCL1gMo8KMHSIFo7QRhdGkXpsku2UQLpgw&oe=62D49F26",
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlIjoiUm9sZUN1c3RvbWVyIiwiSWQiOiIyYTBhMjdjMy0yMjkwLTQ4MDYtNzIwMy0wOGRhM2I3MTlkODIiLCJuYmYiOjE2NTc1OTEyNjgsImV4cCI6MTY1NzY3NzY2OCwiaWF0IjoxNjU3NTkxMjY4fQ.BipakHfRjRz_bou36nDg4KNM9F7bGP6f3P1JhZKdgBs",
+                verifyEmail: false,
+                verifyPhone: true,
             })
-                .then(res => {
-                    // console.log('res', res)
-                    if (res.status === 200) {
-                        cookies.save('admin', res.data)
-                    }
-                    else if (res.status === 400) {
-                        alert("Tài khoản hoặc mật khẩu không đúng");
-                        // loginFaild = true
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                    alert("Tài khoản hoặc mật khẩu không đúng");
-                })
-
             history.push('/list')
+        }
+        else {
+            alert("Tài khoản hoặc mật khẩu khong đúng");
+        }
+        // try {
+        //     await callApi('api/admins/login', 'POST', {
+        //         username: data.username,
+        //         password: data.password,
+        //     })
+        //         .then(res => {
+        //             // console.log('res', res)
+        //             if (res.status === 200) {
+        //                 cookies.save('admin', res.data)
+        //             }
+        //             else if (res.status === 400) {
+        //                 alert("Tài khoản hoặc mật khẩu không đúng");
+        //                 // loginFaild = true
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.log(err);
+        //             alert("Tài khoản hoặc mật khẩu không đúng");
+        //         })
 
-        }
-        catch (err) {
-            console.log(err.response)
-        }
+        //     history.push('/list')
+
+        // }
+        // catch (err) {
+        //     console.log(err.response)
+        // }
     }
 
     return (

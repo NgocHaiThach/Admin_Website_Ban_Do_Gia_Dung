@@ -3,7 +3,7 @@ import { Button, Modal, Table } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { deleteOneCategory } from '../../reudx/Categories/apiFuntionCategory';
+import { deleteOneCategory, setListCatergory } from '../../reudx/Categories/apiFuntionCategory';
 
 
 function TableCategories({ titleData, listCategory }) {
@@ -20,6 +20,72 @@ function TableCategories({ titleData, listCategory }) {
         deleteOneCategory(dispatch, id);
         history.push('/categorise');
         handleClose()
+    }
+
+    const renderIconSort = (status, id, name) => {
+        if (status === "none") {
+            return (
+                <i className="fa-solid fa-arrow-down-wide-short"
+                    onClick={() => changeSortStatus(id, name)}
+                    style={{ marginLeft: '15px' }}>
+                </i>
+            );
+        }
+        else if (status === 'desc') {
+            return (
+                <i className="fa-solid fa-arrow-down-wide-short"
+                    onClick={() => changeSortStatus(id, name)}
+                    style={{ marginLeft: '15px' }}></i>
+            )
+        }
+        else if (status === "asc") {
+            return (
+                <i className="fa-solid fa-arrow-down-wide-short"
+                    onClick={() => changeSortStatus(id, name)}
+                    style={{ marginLeft: '15px' }}>
+                </i>
+            );
+        }
+    }
+
+    const changeSortStatus = (id, field) => {
+        titleData?.forEach((item, index) => {
+            if (index === id) {
+                if (item.sortable === 'none' || item.sortable === 'desc') {
+                    item.sortable = 'asc';
+                    data.sort((a, b) => {
+                        if (typeof a[field] === 'number') {
+
+                            return a[field] - b[field];
+                        }
+                        else if (typeof a[field] === 'string') {
+                            return a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1;
+                        }
+
+                    })
+                    setListCatergory(dispatch, data);
+                }
+                else if (item.sortable === 'asc') {
+                    item.sortable = 'desc';
+                    data.sort((a, b) => {
+                        if (typeof a[field] === 'number') {
+                            return b[field] - a[field];
+                        }
+                        else if (typeof a[field] === 'string') {
+                            return b[field].toLowerCase() > a[field].toLowerCase() ? 1 : -1;
+                        }
+                    })
+                    setListCatergory(dispatch, data);
+                }
+                // else if (item.sortable === 'desc') {
+                //     item.sortable = 'none';
+                //     setListEmployee(dispatch, data);
+                // }
+            }
+            else {
+                item.sortable = 'none';
+            }
+        })
     }
 
     return (

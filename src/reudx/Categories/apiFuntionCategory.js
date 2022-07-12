@@ -14,6 +14,17 @@ export const getListCategory = async (dispatch) => {
     }
 }
 
+// set List Employee sort
+export const setListCatergory = async (dispatch, list) => {
+    dispatch(getListCategoryStart)
+    try {
+        dispatch(getListCategorySuccess(list))
+    }
+    catch (err) {
+        dispatch(getListCategoryFailure(err))
+    }
+}
+
 //ADD: add one category
 export const addCategory = async (dispatch,
     categoryId,

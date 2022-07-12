@@ -30,8 +30,8 @@ function AllStatus(props) {
 
     const getBillListAll = async () => {
         setIsLoading(true);
-        const res = await callApi("/orders/get", "POST", {
-            customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
+        const res = await callApi("/orders/admin/get", "POST", {
+            // customerId: "2a0a27c3-2290-4806-7203-08da3b719d82",
             page: currentPage,
             size: sizePage,
         })
@@ -157,6 +157,19 @@ function AllStatus(props) {
         })
     }
 
+    const confirmBill = async (id) => {
+        const res = await callApi("/orders/approve", "POST", {
+            orderId: id,
+        });
+        if (res.status === 200) {
+            handleShow();
+            getBillListAll();
+        }
+        else {
+            alert('Có lỗi xảy ra, vui lòng kiểm tra lại')
+        }
+    }
+
     return (
         // listBill.length > 0 ?
         <div>
@@ -253,27 +266,23 @@ function AllStatus(props) {
                                 <td>{item.status}</td>
                                 <td>{formatPrice(item.total)}đ</td>
                                 <td>{item.orderDate}</td>
-                                <td className="col-lg-3">
-                                    <Button variant="success">
+                                {item.status === 'PRSS' ? <td className="col-lg-3">
+                                    <Button onClick={() => confirmBill(item.orderId)} variant="success">
                                         Cập nhật
                                     </Button>
                                     <Modal show={show} onHide={handleClose}>
                                         <Modal.Header closeButton>
-                                            <Modal.Title>Confirm</Modal.Title>
+                                            <Modal.Title>Thông báo</Modal.Title>
                                         </Modal.Header>
-                                        <Modal.Body>Are you sure you want to delete this employee?</Modal.Body>
+                                        <Modal.Body>Xác nhận đơn hành thành công!</Modal.Body>
                                         <Modal.Footer>
-                                            <Button variant="secondary" onClick={handleClose}>
+                                            <Button variant="primary" onClick={handleClose}>
                                                 Trở về
-                                            </Button>
-                                            <Button
-                                                variant="danger"
-                                            >
-                                                Xóa loại sản phẩm
                                             </Button>
                                         </Modal.Footer>
                                     </Modal>
                                 </td>
+                                    : null}
                             </tr>
                         </tbody>
                     ))}

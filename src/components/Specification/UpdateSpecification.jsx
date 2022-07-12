@@ -1,14 +1,18 @@
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
-import { Button, Container, Modal } from 'react-bootstrap';
+import { Button, Container, Modal, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { updateOneSpecification } from '../../reudx/Specification/apiSpecification';
 import * as Yup from "yup";
 import InputField from '../InputField';
 import { useParams } from 'react-router-dom';
+import cookies from 'react-cookies';
+
 
 function UpdateSpecification(props) {
+
+    const adminInfo = cookies.load('admin');
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -36,45 +40,49 @@ function UpdateSpecification(props) {
 
     return (
         <Container>
-            <Formik
-                initialValues={
-                    {
-                        specificationId: listSpecification[0].specificationId || "",
-                        name: listSpecification[0].name || "",
-                    }
-                }
-                validationSchema={validate}
-                onSubmit={(values) => {
-                    const { specificationId, name } = values;
-                    console.log(specificationId, name);
-                    updateOneSpecification(dispatch, specificationId, name);
-                    handleShow();
+            <Row>
+                {adminInfo ?
+                    <Formik
+                        initialValues={
+                            {
+                                specificationId: listSpecification[0].specificationId || "",
+                                name: listSpecification[0].name || "",
+                            }
+                        }
+                        validationSchema={validate}
+                        onSubmit={(values) => {
+                            const { specificationId, name } = values;
+                            console.log(specificationId, name);
+                            updateOneSpecification(dispatch, specificationId, name);
+                            handleShow();
 
-                }}
-            >
-                {(formik) => (
-                    <Form>
-                        <InputField label="Mã" name="specificationId" type="text" />
-                        <InputField label="Tên" name="name" type="text" />
+                        }}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <InputField label="Mã" name="specificationId" type="text" />
+                                <InputField label="Tên" name="name" type="text" />
 
-                        <Button
-                            variant="secondary"
-                            className="mr-5"
-                            type='reset'
-                        >
-                            Reset
-                        </Button>
-                        <Button
-                            variant="primary"
-                            className="ml-5"
-                            type="submit"
-                        >
-                            Cập Nhật Danh Mục
+                                <Button
+                                    variant="secondary"
+                                    className="mr-5"
+                                    type='reset'
+                                >
+                                    Reset
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    className="ml-5"
+                                    type="submit"
+                                >
+                                    Cập Nhật Danh Mục
 
-                        </Button>
-                    </Form>
-                )}
-            </Formik>
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+                    : <div>Vui lòng đăng nhập</div>}
+            </Row>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

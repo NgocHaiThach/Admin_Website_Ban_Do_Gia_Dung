@@ -7,8 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addCategory } from '../../reudx/Categories/apiFuntionCategory';
 import { getListClassification } from '../../reudx/Classification/apiFuntionClassification';
 import SelectField from '../SelectField';
+import cookies from 'react-cookies';
+
 
 function AddCategories(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const validate = Yup.object({
         categoryId: Yup.string()
             .max(40, "Tên phải ngắn hơn 10 ký tự")
@@ -39,7 +44,9 @@ function AddCategories(props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getListClassification(dispatch);
+        if (adminInfo) {
+            getListClassification(dispatch);
+        }
     }, [])
     const listClassification = useSelector(state => state.classification.list);
 
@@ -53,97 +60,100 @@ function AddCategories(props) {
 
     return (
         <Container>
-            <Row>
-                <Formik
-                    initialValues={
-                        {
-                            categoryId: "",
-                            classificationId: "",
-                            name: "",
-                            slogan: "",
-                            image: "",
-                            advantages1: "",
-                            advantages2: "",
-                            advantages3: "",
-                            advantages4: "",
+            {adminInfo ?
+                <Row>
+                    <h3 className='mb-4 mt-4'>Thêm sản phẩm</h3>
+                    <Formik
+                        initialValues={
+                            {
+                                categoryId: "",
+                                classificationId: "",
+                                name: "",
+                                slogan: "",
+                                image: "",
+                                advantages1: "",
+                                advantages2: "",
+                                advantages3: "",
+                                advantages4: "",
+                            }
                         }
-                    }
-                    validationSchema={validate}
-                    onSubmit={(values) => {
-                        const {
-                            categoryId,
-                            classificationId,
-                            name,
-                            slogan,
-                            image,
-                            advantages1,
-                            advantages2,
-                            advantages3,
-                            advantages4,
-                        } = values;
-                        console.log(
-                            categoryId,
-                            classificationId,
-                            name,
-                            slogan,
-                            image,
-                            advantages1,
-                            advantages2,
-                            advantages3,
-                            advantages4,
-                        )
-                        addCategory(dispatch, categoryId,
-                            classificationId,
-                            name,
-                            slogan,
-                            image,
-                            advantages1,
-                            advantages2,
-                            advantages3,
-                            advantages4)
-                        handleShow()
-                    }}
-                >
-                    {(formik) => (
-                        <Form>
-                            <InputField label="Mã Loại" name="categoryId" type="text" />
-                            {/* <InputField label="Mã Danh Mục" name="classificationId" type="text" /> */}
-                            <FastField
-                                name="classificationId"
-                                component={SelectField}
+                        validationSchema={validate}
+                        onSubmit={(values) => {
+                            const {
+                                categoryId,
+                                classificationId,
+                                name,
+                                slogan,
+                                image,
+                                advantages1,
+                                advantages2,
+                                advantages3,
+                                advantages4,
+                            } = values;
+                            console.log(
+                                categoryId,
+                                classificationId,
+                                name,
+                                slogan,
+                                image,
+                                advantages1,
+                                advantages2,
+                                advantages3,
+                                advantages4,
+                            )
+                            addCategory(dispatch, categoryId,
+                                classificationId,
+                                name,
+                                slogan,
+                                image,
+                                advantages1,
+                                advantages2,
+                                advantages3,
+                                advantages4)
+                            handleShow()
+                        }}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <InputField label="Mã Loại" name="categoryId" type="text" />
+                                {/* <InputField label="Mã Danh Mục" name="classificationId" type="text" /> */}
+                                <FastField
+                                    name="classificationId"
+                                    component={SelectField}
 
-                                label="Loại"
-                                placeholder="Mã danh mục"
-                                options={CLASSCIFICATION_OPTIONS}
-                            />
-                            <InputField label="Tên" name="name" type="text" />
-                            <InputField label="Slogan" name="slogan" type="text" />
-                            <InputField label="Ảnh" name="image" type="text" />
-                            <InputField label="Mô tả" name="advantages1" type="text" />
-                            <InputField label="Mô tả" name="advantages2" type="text" />
-                            <InputField label="Mô tả" name="advantages3" type="text" />
-                            <InputField label="Mô tả" name="advantages4" type="text" />
+                                    label="Loại"
+                                    placeholder="Mã danh mục"
+                                    options={CLASSCIFICATION_OPTIONS}
+                                />
+                                <InputField label="Tên" name="name" type="text" />
+                                <InputField label="Slogan" name="slogan" type="text" />
+                                <InputField label="Ảnh" name="image" type="text" />
+                                <InputField label="Mô tả" name="advantages1" type="text" />
+                                <InputField label="Mô tả" name="advantages2" type="text" />
+                                <InputField label="Mô tả" name="advantages3" type="text" />
+                                <InputField label="Mô tả" name="advantages4" type="text" />
 
-                            <Button
-                                variant="secondary"
-                                className="mr-5"
-                                type='reset'
-                            >
+                                <Button
+                                    variant="secondary"
+                                    className="mr-5"
+                                    type='reset'
+                                >
 
-                                Reset
-                            </Button>
-                            <Button
-                                variant="primary"
-                                className="ml-5"
-                                type="submit"
-                            >
-                                Thêm Loại Sản Phẩm
+                                    Reset
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    className="ml-5"
+                                    type="submit"
+                                >
+                                    Thêm Loại Sản Phẩm
 
-                            </Button>
-                        </Form>
-                    )}
-                </Formik>
-            </Row>
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+                </Row>
+                : <div>Vui lòng đăng nhậo</div>}
 
 
             <Modal show={show} onHide={handleClose}>

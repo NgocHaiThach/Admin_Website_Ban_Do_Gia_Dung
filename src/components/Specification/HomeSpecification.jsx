@@ -6,8 +6,13 @@ import { getListSpecificationSuccess } from '../../reudx/Specification/listSpeci
 import callApi from '../../utils/callApi';
 import { FormatInput } from '../../utils/format';
 import TableSpecification from './TableSpecification';
+import cookies from 'react-cookies';
+
 
 function HomeSpecification(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const titleData = [
         // { name: 'id', field: "Id", sortable: 'none' },
         { name: 'specificationId', field: "Id", sortable: 'none' },
@@ -26,7 +31,8 @@ function HomeSpecification(props) {
     }
 
     useEffect(() => {
-        getListSpecification(dispatch);
+        if (adminInfo)
+            getListSpecification(dispatch);
         getToSearch();
     }, []);
 
@@ -57,44 +63,41 @@ function HomeSpecification(props) {
         const filter = listToSearch.filter((item) => {
             const name = FormatInput(item.name)
             if (name.includes(val)) {
-                return item
+                return item;
             }
         })
         dispatch(getListSpecificationSuccess(filter));
         setInput(input)
     }
 
-
-
-
     return (
         <Container>
-            <Row>
-                <div className="panel panel-primary">
-                    <div className="panel-heading">
-                        <h3 className="panel-title mb-40 mt-4">Danh Sách Thông Số</h3>
-                    </div>
+            {adminInfo ?
+                <Row>
+                    <div className="panel panel-primary">
+                        <div className="panel-heading">
+                            <h3 className="panel-title mb-40 mt-4">Danh Sách Thông Số</h3>
+                        </div>
 
+                        <form className='search-product mb-20' >
+                            <input className='search__input'
+                                placeholder='Thông số bạn muốn tìm bạn muốn tìm...'
+                                value={search}
+                                onChange={onSearch}
+                                style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                            />
+                        </form>
 
-                    <form className='search-product mb-20' >
-                        <input className='search__input'
-                            placeholder='Thông số bạn muốn tìm bạn muốn tìm...'
-                            value={search}
-                            onChange={onSearch}
-                            style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                        <div className="total-money mb-3" style={{ fontSize: '20px' }}>
+                            Tổng thông số: {listSpecification.length}
+                        </div>
+
+                        <TableSpecification
+                            listSpecification={listSpecification}
+                            titleData={titleData}
                         />
-                    </form>
-
-                    <div className="total-money mb-3" style={{ fontSize: '20px' }}>
-                        Tổng thông số: {listSpecification.length}
                     </div>
-
-                    <TableSpecification
-                        listSpecification={listSpecification}
-                        titleData={titleData}
-                    />
-                </div>
-            </Row>
+                </Row> : <div>Vui lòng đăng nhập</div>}
         </Container>
     );
 }

@@ -6,12 +6,17 @@ import { getListCategorySuccess } from '../../reudx/Categories/listCategorySlice
 import callApi from '../../utils/callApi';
 import { FormatInput } from '../../utils/format';
 import TableCategories from './TableCategories';
+import cookies from 'react-cookies';
+
 
 function HomeCategories(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const titleData = [
-        { name: 'id', field: "Mã", sortable: 'none' },
+        { name: 'categoryId', field: "Mã", sortable: 'none' },
         { name: 'classificationId', field: "Mã danh mục", sortable: 'none' },
-        { name: 'categories', field: "Loại", sortable: 'none' },
+        { name: 'name', field: "Loại", sortable: 'none' },
         { name: 'slogan', field: "Slogan", sortable: 'none' },
     ]
     const [listToSearch, setListToSearch] = useState([]);
@@ -27,13 +32,13 @@ function HomeCategories(props) {
     }
 
     useEffect(() => {
-        getListCategory(dispatch);
-        getToSearch();
+        if (adminInfo) {
+            getListCategory(dispatch);
+            getToSearch();
+        }
     }, [])
 
     const listCategory = useSelector(state => state.category.list);
-
-
 
     const onSearch = (e) => {
         const input = e.target.value
@@ -69,31 +74,34 @@ function HomeCategories(props) {
 
     return (
         <Container>
-            <Row>
-                <div className="panel panel-primary">
-                    <div className="panel-heading">
-                        <h3 className="panel-title mb-40 mt-4">Danh Sách Loại Sản Phẩm</h3>
-                    </div>
+            {adminInfo ?
+                <Row>
+                    <div className="panel panel-primary">
+                        <div className="panel-heading">
+                            <h3 className="panel-title mb-40 mt-4">Danh Sách Loại Sản Phẩm</h3>
+                        </div>
 
-                    <form className='search-product mb-20' >
-                        <input className='search__input'
-                            placeholder='Loại sản phẩm bạn muốn tìm...'
-                            value={search}
-                            onChange={onSearch}
-                            style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                        <form className='search-product mb-20' >
+                            <input className='search__input'
+                                placeholder='Loại sản phẩm bạn muốn tìm...'
+                                value={search}
+                                onChange={onSearch}
+                                style={{ fontSize: '18px', width: '350px', padding: '10px' }}
+                            />
+                        </form>
+
+                        <div className="total-money mb-3" style={{ fontSize: '20px' }}>
+                            Tổng số: {listCategory.length}
+                        </div>
+
+                        <TableCategories
+                            listCategory={listCategory}
+                            titleData={titleData}
                         />
-                    </form>
-
-                    <div className="total-money mb-3" style={{ fontSize: '20px' }}>
-                        Tổng số: {listCategory.length}
                     </div>
-
-                    <TableCategories
-                        listCategory={listCategory}
-                        titleData={titleData}
-                    />
-                </div>
-            </Row>
+                </Row>
+                : <div>Vui lòng đăng nhập</div>
+            }
         </Container>
     );
 }

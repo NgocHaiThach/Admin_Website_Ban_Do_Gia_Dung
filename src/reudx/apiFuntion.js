@@ -86,14 +86,15 @@ export const updateOneProduct = async (dispatch,
      weight, 
      width, 
      b,
-     images,) => {
+     images,
+     enable,) => {
     try {
         const res = await callApi(`/admin/products/${id}`, 'PUT', {
             productId: id,
             categoryId: category,
             name: name,
             price: price,
-            highlights: [highlights],
+            highlights: highlights,
             avatar: {
                 content: avatar,
                 isUrl: true,
@@ -106,11 +107,10 @@ export const updateOneProduct = async (dispatch,
             height: height,
             length: length,
             weight: weight,
-            enable: true,
+            enable: enable,
             specifications: b,
         })
         getListEmployee(dispatch);
-        console.log(highlights)
     }
     catch (err) {
         console.log(err)

@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import InputField from '../InputField';
-import * as Yup from "yup";
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
-import { FastField, Form, Formik } from 'formik';
-import SelectField from '../SelectField';
 import axios from 'axios';
-import SelectField2 from '../SelectField2';
-import { addStore } from '../../reudx/Store/apiFunctionStore';
+import { Form, Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
+import cookies from 'react-cookies';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import callApi from '../../utils/callApi';
+import * as Yup from "yup";
+import InputField from '../InputField';
+import SelectField2 from '../SelectField2';
+
 
 function UpdateStore(props) {
+
+    const adminInfo = cookies.load('admin');
+
 
     //validate role
     const validate = Yup.object({
@@ -33,7 +35,6 @@ function UpdateStore(props) {
     const store = listStore.filter((item) => {
         return (item.storeId) === (+id)
     })
-    console.log(store);
     // const [store, setStore] = useState({});
 
     // const getOneStore = async () => {
@@ -161,107 +162,109 @@ function UpdateStore(props) {
 
     return (
         <Container>
-            <div className="mt-4 mb-4" style={{ fontSize: '24px', fontWeight: 'bold' }}>
-                Cập nhật Cửa Hàng
-            </div>
-            <Row>
-                <Formik
-                    initialValues={
-                        {
-                            name: store[0]?.name || "",
-                            province: 'Tỉnh Trà Vinh' || "",
-                            district: "",
-                            ward: "",
-                            detail: store[0]?.fullAddress || "",
+            <>
+                <div className="mt-4 mb-4" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                    Cập nhật Cửa Hàng
+                </div>
+                <Row>
+                    <Formik
+                        initialValues={
+                            {
+                                name: store[0]?.name || "",
+                                province: 'Tỉnh Trà Vinh' || "",
+                                district: "",
+                                ward: "",
+                                detail: store[0]?.fullAddress || "",
+                            }
                         }
-                    }
-                    validationSchema={validate}
-                    onSubmit={(values) => {
-                        const {
-                            name,
-                            province,
-                            district,
-                            ward,
-                            detail,
-                        } = values;
-                        console.log(
-                            name,
-                            province,
-                            district,
-                            ward,
-                            detail,
-                        )
-                        // addStore(dispatch, name, province, district, ward, detail)
-                        handleShow()
-                    }}
-                >
-                    {(formik) => (
-                        <Form>
-                            <InputField label="Tên" name="name" type="text" />
-                            <Row>
-                                <Col className="mr-10" md={4}>
-                                    <SelectField2
-                                        setReRender={setReRender}
-                                        getLocalStorage={getLocalStorage}
-                                        label="Tỉnh/Thành Phố"
-                                        name="province"
-                                        type="option"
-                                        options={PROVINCES_OPTIONS} />
-                                </Col>
+                        validationSchema={validate}
+                        onSubmit={(values) => {
+                            const {
+                                name,
+                                province,
+                                district,
+                                ward,
+                                detail,
+                            } = values;
+                            console.log(
+                                name,
+                                province,
+                                district,
+                                ward,
+                                detail,
+                            )
+                            // addStore(dispatch, name, province, district, ward, detail)
+                            handleShow()
+                        }}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <InputField label="Tên" name="name" type="text" />
+                                <Row>
+                                    <Col className="mr-10" md={4}>
+                                        <SelectField2
+                                            setReRender={setReRender}
+                                            getLocalStorage={getLocalStorage}
+                                            label="Tỉnh/Thành Phố"
+                                            name="province"
+                                            type="option"
+                                            options={PROVINCES_OPTIONS} />
+                                    </Col>
 
-                                <Col className="mr-10" md={4}>
-                                    <SelectField2
-                                        setReRender={setReRender}
-                                        getDistrictLocalStorage={getDistrictLocalStorage}
-                                        label="Quận/Huyện"
-                                        name="district"
-                                        type="option"
-                                        options={DISTRICTS_OPTIONS} />
-                                </Col>
-                                <Col className="mr-10" md={4}>
-                                    <SelectField2
-                                        label="Xã/Phường"
-                                        name="ward"
-                                        type="option"
-                                        // dtf='hai'
-                                        options={wardInDistrict} />
-                                </Col>
-                            </Row>
-                            <InputField label="Số nhà/Đường" name="detail" type="text" />
-                            <Button
-                                variant="secondary"
-                                className="mr-5"
-                                type='reset'
-                                onClick={removeLocal}
-                            >
+                                    <Col className="mr-10" md={4}>
+                                        <SelectField2
+                                            setReRender={setReRender}
+                                            getDistrictLocalStorage={getDistrictLocalStorage}
+                                            label="Quận/Huyện"
+                                            name="district"
+                                            type="option"
+                                            options={DISTRICTS_OPTIONS} />
+                                    </Col>
+                                    <Col className="mr-10" md={4}>
+                                        <SelectField2
+                                            label="Xã/Phường"
+                                            name="ward"
+                                            type="option"
+                                            // dtf='hai'
+                                            options={wardInDistrict} />
+                                    </Col>
+                                </Row>
+                                <InputField label="Số nhà/Đường" name="detail" type="text" />
+                                <Button
+                                    variant="secondary"
+                                    className="mr-5"
+                                    type='reset'
+                                    onClick={removeLocal}
+                                >
 
-                                Reset
-                            </Button>
-                            <Button
-                                variant="primary"
-                                className="ml-5"
-                                type="submit"
-                            >
-                                Thêm Loại Sản Phẩm
+                                    Reset
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    className="ml-5"
+                                    type="submit"
+                                >
+                                    Thêm Loại Sản Phẩm
 
-                            </Button>
-                        </Form>
-                    )}
-                </Formik>
-            </Row>
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+                </Row>
 
 
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Thông báo</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Thêm Loại Sản Phẩm Thành Công</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Trở về
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Thông báo</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Thêm Loại Sản Phẩm Thành Công</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={handleClose}>
+                            Trở về
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
         </Container>
     );
 }

@@ -7,8 +7,13 @@ import { getListEmployeeSuccess } from '../../reudx/listEmployeeSlice';
 import callApi from '../../utils/callApi';
 import { FormatInput } from '../../utils/format';
 import TableProduct from './TableProduct';
+import cookies from 'react-cookies';
+
 
 function ImportStore(props) {
+
+    const adminInfo = cookies.load('admin');
+
     const titleData = [
         { name: 'id', field: "Chọn", sortable: 'none' },
         { name: 'id', field: "Mã", sortable: 'none' },
@@ -25,8 +30,10 @@ function ImportStore(props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getListEmployee(dispatch);
-        getToSearch();
+        if (adminInfo) {
+            getListEmployee(dispatch);
+            getToSearch();
+        }
     }, []);
 
     const [listToSearch, setListToSearch] = useState([]);
@@ -116,56 +123,60 @@ function ImportStore(props) {
 
     return (
         <Container>
-            <Form className="mb-4">
-                <div>
-                    <h3 className="mt-4 mb-4">Danh sách sản phẩm nhập hàng</h3>
-                    {/* <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a> */}
-                    <div className="d-flex justify-content-between align-items-center">
-                        <div className="col-md-3 form-check" style={{ marginRight: '15px' }}>
-                            <input
-                                // onChange={() => setCheckAll(!checkAll)}
-                                // checked={checkAll}
-                                value={search}
-                                onChange={onSearch}
-                                style={{ width: '250px' }}
-                                className="col-md-3"
-                                placeholder="Sản phẩm muốn  tìm..."
-                                type="text"
-                            />
-                            {/* <label className="form-check-label"
+            {adminInfo ?
+                <>
+                    <Form className="mb-4">
+                        <div>
+                            <h3 className="mt-4 mb-4">Danh sách sản phẩm nhập hàng</h3>
+                            {/* <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a> */}
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div className="col-md-3 form-check" style={{ marginRight: '15px' }}>
+                                    <input
+                                        // onChange={() => setCheckAll(!checkAll)}
+                                        // checked={checkAll}
+                                        value={search}
+                                        onChange={onSearch}
+                                        style={{ width: '250px' }}
+                                        className="col-md-3"
+                                        placeholder="Sản phẩm muốn  tìm..."
+                                        type="text"
+                                    />
+                                    {/* <label className="form-check-label"
                                 htmlFor="checkbox-all">
                                 Chọn tất cả
                             </label> */}
+                                </div>
+                                <div className="d-flex col-md-8 justify-content-end">
+                                    <select onChange={e => setValueSelect(e.target.value)} className="col-md-3" name="action" required>
+                                        <option style={{ textAlign: 'center' }} value="none">-- Chọn hành động --</option>
+                                        <option style={{ textAlign: 'center' }} value="import">Nhập hàng</option>
+                                        <option style={{ textAlign: 'center' }} value="export">Xuất hàng</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div className="d-flex col-md-8 justify-content-end">
-                            <select onChange={e => setValueSelect(e.target.value)} className="col-md-3" name="action" required>
-                                <option style={{ textAlign: 'center' }} value="none">-- Chọn hành động --</option>
-                                <option style={{ textAlign: 'center' }} value="import">Nhập hàng</option>
-                                <option style={{ textAlign: 'center' }} value="export">Xuất hàng</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </Form>
-            <TableProduct
-                titleData={titleData}
-                listEmployee={listEmployee}
-                onActions={onActions}
-                quantity={quantity}
-            />
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Thông báo</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{valueSelect === "import" ? "Thực hiện nhập hàng thành công" : "Thực hiện xuất hàng thành công"}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={() => {
-                        handleClose()
-                    }}>
-                        Trở về
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                    </Form>
+                    <TableProduct
+                        titleData={titleData}
+                        listEmployee={listEmployee}
+                        onActions={onActions}
+                        quantity={quantity}
+                    />
+                    <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Thông báo</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>{valueSelect === "import" ? "Thực hiện nhập hàng thành công" : "Thực hiện xuất hàng thành công"}</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="primary" onClick={() => {
+                                handleClose()
+                            }}>
+                                Trở về
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </>
+                : <div>Vui lòng đăng nhập</div>}
         </Container>
     );
 }
