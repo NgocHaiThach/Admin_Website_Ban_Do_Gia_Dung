@@ -372,7 +372,7 @@ function AddEmployee(props) {
                                             <img
                                                 key={index}
                                                 src={i}
-                                                style={{ width: '50px', height: '50px', margin: '0 10px' }}
+                                                style={{ width: '90px', height: '90px', margin: '0 10px' }}
                                                 alt="img"
                                             />
                                         ))}
